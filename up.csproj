@@ -64,7 +64,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Classes\Connection.cs" />
-    <Compile Include="Classes\Employees.cs" />
+    <Compile Include="Models\Category.cs" />
+    <Compile Include="Models\Employees.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -79,6 +80,15 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Product.cs" />
+    <Compile Include="Models\Report.cs" />
+    <Compile Include="Models\ReturnItem.cs" />
+    <Compile Include="Models\Returns.cs" />
+    <Compile Include="Models\Sale.cs" />
+    <Compile Include="Models\SaleItem.cs" />
+    <Compile Include="Models\Supplier.cs" />
+    <Compile Include="Models\SupplierOrder.cs" />
+    <Compile Include="Models\SupplierOrderItem.cs" />
     <Compile Include="Pages\Authorization.xaml.cs">
       <DependentUpon>Authorization.xaml</DependentUpon>
     </Compile>
