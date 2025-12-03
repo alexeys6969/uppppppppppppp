@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using up.Classes;
 
 namespace up.Pages
 {
@@ -20,14 +23,80 @@ namespace up.Pages
     /// </summary>
     public partial class Authorization : Page
     {
-        public Authorization()
+        Employees employee;
+        Connection connect = new Connection();
+        public Authorization(Employees _employee)
         {
             InitializeComponent();
+            employee = _employee;
         }
 
         private void authorization(object sender, RoutedEventArgs e)
         {
+            string Login = login.Text.Trim();
+            string Password = password.Password;
 
+            Connection db = new Connection();
+
+            DataTable employeesDT = db.ExecuteQuery("SELECT * FROM employee");
+
+            bool found = false;
+            Employees currentEmployee = null;
+
+            foreach (DataRow row in employeesDT.Rows)
+            {
+                string dbLogin = row["login_employee"].ToString();
+                string dbPasswordHash = row["password_hash"].ToString();
+                string hashedInput = db.HashPassword(Password);
+
+                if (Login == dbLogin && hashedInput == dbPasswordHash)
+                {
+                    found = true;
+                    currentEmployee = new Employees
+                    {
+                        employee_id = Convert.ToInt32(row["employee_id"]),
+                        full_name = row["full_name"].ToString(),
+                        position = row["position"].ToString(),
+                        login = dbLogin,
+                        password = dbPasswordHash
+                    };
+                    break;
+                }
+            }
+
+            if (found && currentEmployee != null)
+            {
+                MessageBox.Show($"Добро пожаловать, {currentEmployee.full_name}!",
+                              "Успешный вход",
+                              MessageBoxButton.OK, MessageBoxImage.Information);
+
+                string roleConnection = db.GetConnection(currentEmployee.position);
+
+                try
+                {
+                    using (var conn = new SqlConnection(roleConnection))
+                    {
+                        conn.Open();
+
+                        currentEmployee.password = roleConnection;
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка подключения: {ex.Message}\n\n" +
+                                  "Возможно, не созданы пользователи SQL Server для ролей.",
+                                  "Ошибка прав",
+                                  MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Неверный логин или пароль",
+                              "Ошибка входа",
+                              MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
-    }
+    } 
 }
+            

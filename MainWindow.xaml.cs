@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using up.Classes;
 
 namespace up
 {
@@ -20,9 +21,22 @@ namespace up
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Employees currentEmployee;
+        private string connectionString;
+        private Connection db;
         public MainWindow()
         {
             InitializeComponent();
+            frame.Navigate(new Pages.Authorization(currentEmployee));
         }
+        //public MainWindow(Employees employee, string connectionString)
+        //{
+        //    InitializeComponent();
+        //    this.currentEmployee = employee;
+        //    this.connectionString = connectionString;
+        //    this.db = new Connection();
+
+        //    this.Title = $"Music Store - {employee.full_name} ({employee.position})";
+        //}
     }
 }
