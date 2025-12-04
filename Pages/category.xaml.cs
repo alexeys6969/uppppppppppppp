@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using up.Classes;
 using up.Models;
 
@@ -25,8 +27,7 @@ namespace up.Pages
     {
         private Connection Connection;
         private string userRole;
-        List<Models.Category> categories;
-        Employees employee;
+        private ObservableCollection<Models.Category> categories; Employees employee;
         public Category(string userPosition, Employees _employees)
         {
             InitializeComponent();
@@ -41,7 +42,10 @@ namespace up.Pages
             try
             {
                 string roleConnection = Connection.GetConnection(userRole);
-                categories = Connection.GetCategories(roleConnection);
+                var loadedCategories = Connection.GetCategories(roleConnection);
+
+                // Используем ObservableCollection для автоматического обновления UI
+                categories = new ObservableCollection<Models.Category>(loadedCategories);
                 categoriesDataGrid.ItemsSource = categories;
             }
             catch (Exception ex)
@@ -53,63 +57,77 @@ namespace up.Pages
 
         private void Back(object sender, RoutedEventArgs e)
         {
-            MainWindow.mainWindow.frame.
+            MainWindow.mainWindow.frame.Navigate(new Pages.Navigation(employee));
         }
 
         private void AcceptChange(object sender, RoutedEventArgs e)
         {
             try
             {
-                // Получаем текущие данные из DataGrid
-                var currentCategories = (List<Models.Category>)categoriesDataGrid.ItemsSource;
+                // Принудительно завершаем редактирование в DataGrid
+                categoriesDataGrid.CommitEdit();
+                categoriesDataGrid.CommitEdit(); // Дважды для уверенности
 
-                // Сначала обновляем существующие записи
+                // Делаем паузу для применения изменений
+                Application.Current.Dispatcher.Invoke(() => { }, DispatcherPriority.Background);
+
+                // Сохраняем копию текущих данных
+                var currentCategories = categories.ToList();
+                var originalCategories = Connection.GetCategories(Connection.GetConnection(userRole)).ToList();
+
+                // 1. ОБНОВЛЕНИЕ существующих категорий
                 foreach (var category in currentCategories)
                 {
-                    if (category.Id > 0) // Если ID > 0, значит существующая запись
+                    if (category.Id > 0) // Существующая запись
                     {
-                        // Проверяем, изменилась ли категория
-                        var originalCategory = categories.FirstOrDefault(c => c.Id == category.Id);
+                        var originalCategory = originalCategories.FirstOrDefault(c => c.Id == category.Id);
                         if (originalCategory != null &&
                             (originalCategory.Name != category.Name ||
                              originalCategory.Description != category.Description))
                         {
-                            Connection.UpdateCategory(category, userRole);
+                            bool updated = Connection.UpdateCategory(category, userRole);
+                            if (!updated)
+                            {
+                                MessageBox.Show($"Не удалось обновить категорию '{category.Name}'",
+                                               "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            }
                         }
                     }
                 }
 
-                // Затем добавляем новые категории
-                foreach (var category in currentCategories)
+                // 2. ДОБАВЛЕНИЕ новых категорий
+                foreach (var category in currentCategories.Where(c => c.Id == 0))
                 {
-                    if (category.Id == 0) // Если ID == 0, значит новая запись
+                    int newId = Connection.AddCategory(category, userRole);
+                    if (newId > 0)
                     {
-                        int newId = Connection.AddCategory(category, userRole);
-                        category.Id = newId; // Обновляем ID в объекте
+                        category.Id = newId;
                     }
                 }
 
-                // Удаляем категории, которые были удалены из DataGrid
-                var deletedCategories = categories.Where(oldCat =>
-                    !currentCategories.Any(newCat => newCat.Id == oldCat.Id));
+                // 3. УДАЛЕНИЕ категорий
+                var categoriesToDelete = originalCategories.Where(oldCat =>
+                    !currentCategories.Any(newCat => newCat.Id == oldCat.Id)).ToList();
 
-                foreach (var deletedCategory in deletedCategories)
+                foreach (var categoryToDelete in categoriesToDelete)
                 {
-                    Connection.DeleteCategory(deletedCategory.Id, userRole);
+                    bool deleted = Connection.DeleteCategory(categoryToDelete.Id, userRole);
+                    if (!deleted)
+                    {
+                        MessageBox.Show($"Не удалось удалить категорию '{categoryToDelete.Name}'",
+                                       "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
                 }
-
-                // Обновляем исходный список
-                categories = currentCategories.ToList();
 
                 MessageBox.Show("Изменения сохранены успешно!",
                                "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                // Обновляем данные (если нужно)
+                // Обновляем данные
                 LoadCategories();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка сохранения: {ex.Message}",
+                MessageBox.Show($"Ошибка сохранения: {ex.Message}\n{ex.StackTrace}",
                                "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
