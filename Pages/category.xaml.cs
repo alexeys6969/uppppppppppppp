@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using up.Classes;
+using up.Models;
 
 namespace up.Pages
 {
@@ -52,13 +53,45 @@ namespace up.Pages
 
         private void Back(object sender, RoutedEventArgs e)
         {
-
+            
         }
 
         private void AcceptChange(object sender, RoutedEventArgs e)
         {
-            categories = (List<Models.Category>)categoriesDataGrid.ItemsSource;
-            Connection.AddCategory(new Models.Category(), userRole);
+            try
+            {
+                // Получаем текущие данные из DataGrid
+                categories = (List<Models.Category>)categoriesDataGrid.ItemsSource;
+
+                // Собираем новые/измененные категории
+                var newCategories = new List<Models.Category>();
+
+                foreach (var category in categories)
+                {
+                    // Проверяем, новая ли это категория (например, по ID)
+                    if (category.Id == 0) // 0 или -1 для новых записей
+                    {
+                        newCategories.Add(category);
+                    }
+                }
+
+                // Добавляем новые категории
+                foreach (var category in newCategories)
+                {
+                    Connection.AddCategory(category, userRole);
+                }
+
+                MessageBox.Show("Изменения сохранены успешно!",
+                               "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                // Обновляем данные
+                LoadCategories();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка сохранения: {ex.Message}",
+                               "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }
