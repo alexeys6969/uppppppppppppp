@@ -92,6 +92,32 @@ namespace up.Classes
             return categories;
         }
 
+        public List<Employees> GetEmployees(string roleConnectionString)
+        {
+            List<Employees> employees = new List<Employees>();
+            string connectionString = roleConnectionString;
+            string query = "SELECT * FROM employees";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Employees em = new Employees
+                        {
+                            full_name = reader.GetString(1),
+                            position = reader.GetString(2)
+                        };
+                        employees.Add(em);
+                    }
+                }
+            }
+            return employees;
+        }
+
         public int AddCategory(Category category, string Connection)
         {
             string query = @"

@@ -92,6 +92,8 @@ namespace up.Pages
                 MessageBox.Show("Неверный логин или пароль",
                               "Ошибка входа",
                               MessageBoxButton.OK, MessageBoxImage.Error);
+                login.Text = "";
+                password.Password = "";
             }
         }
     } 

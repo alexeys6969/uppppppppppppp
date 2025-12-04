@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,38 +15,36 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using up.Classes;
-using up.Models;
 
 namespace up.Pages
 {
     /// <summary>
-    /// Логика взаимодействия для Category.xaml
+    /// Логика взаимодействия для employees.xaml
     /// </summary>
-    public partial class Category : Page
+    public partial class employees : Page
     {
         private Connection Connection;
         private string userRole;
-        private ObservableCollection<Models.Category> categories; 
+        private ObservableCollection<Employees> _employees; 
         Employees employee;
-        public Category(string userPosition, Employees _employees)
+        public employees(string userPosition, Employees _employees)
         {
             InitializeComponent();
             Connection = new Connection();
             userRole = userPosition;
-            LoadCategories();
+            LoadEmployees();
             employee = _employees;
         }
-
-        private void LoadCategories()
+        private void LoadEmployees()
         {
             try
             {
                 string roleConnection = Connection.GetConnection(userRole);
-                var loadedCategories = Connection.GetCategories(roleConnection);
+                var loadedEmployees = Connection.GetEmployees(roleConnection);
 
                 // Используем ObservableCollection для автоматического обновления UI
-                categories = new ObservableCollection<Models.Category>(loadedCategories);
-                categoriesDataGrid.ItemsSource = categories;
+                _employees = new ObservableCollection<Employees>(loadedEmployees);
+                employeesDataGrid.ItemsSource = _employees;
             }
             catch (Exception ex)
             {
@@ -66,24 +63,24 @@ namespace up.Pages
             try
             {
                 // Принудительно завершаем редактирование в DataGrid
-                categoriesDataGrid.CommitEdit();
+                employeesDataGrid.CommitEdit();
 
                 // Делаем паузу для применения изменений
                 Application.Current.Dispatcher.Invoke(() => { }, DispatcherPriority.Background);
 
                 // Сохраняем копию текущих данных
-                var currentCategories = categories.ToList();
-                var originalCategories = Connection.GetCategories(Connection.GetConnection(userRole)).ToList();
+                var currentEmployees = _employees.ToList();
+                var originalEmployees = Connection.GetEmployees(Connection.GetConnection(userRole)).ToList();
 
                 // 1. ОБНОВЛЕНИЕ существующих категорий
-                foreach (var category in currentCategories)
+                foreach (var employees in currentEmployees)
                 {
-                    if (category.Id > 0) // Существующая запись
+                    if (employees.employee_id > 0) // Существующая запись
                     {
-                        var originalCategory = originalCategories.FirstOrDefault(c => c.Id == category.Id);
-                        if (originalCategory != null &&
-                            (originalCategory.Name != category.Name ||
-                             originalCategory.Description != category.Description))
+                        var originalEmpl = originalEmployees.FirstOrDefault(c => c.employee_id == employees.employee_id);
+                        if (originalEmpl != null &&
+                            (originalEmpl.full_name != employees.full_name ||
+                             originalEmpl.position != employees.position))
                         {
                             bool updated = Connection.UpdateCategory(category, userRole);
                             if (!updated)
