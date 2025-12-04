@@ -24,19 +24,12 @@ namespace up
         private Employees currentEmployee;
         private string connectionString;
         private Connection db;
+        public static MainWindow mainWindow;
         public MainWindow()
         {
             InitializeComponent();
             frame.Navigate(new Pages.Authorization(currentEmployee));
+            mainWindow = this;
         }
-        //public MainWindow(Employees employee, string connectionString)
-        //{
-        //    InitializeComponent();
-        //    this.currentEmployee = employee;
-        //    this.connectionString = connectionString;
-        //    this.db = new Connection();
-
-        //    this.Title = $"Music Store - {employee.full_name} ({employee.position})";
-        //}
     }
 }

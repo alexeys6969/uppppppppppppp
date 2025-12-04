@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using up.Models;
 
 namespace up.Classes
 {
@@ -61,6 +62,33 @@ namespace up.Classes
                 default:
                     return masterConnection;
             }
+        }
+
+        public List<Category> GetCategories(string roleConnectionString = null)
+        {
+            List<Category> categories = new List<Category>();
+            string connectionString = roleConnectionString;
+            string query = "SELECT Id, Name, Description FROM Categories";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Category category = new Category
+                        {
+                            Id = reader.GetInt32(0),
+                            Name = reader.GetString(1),
+                            Description = reader.GetString(2)
+                        };
+                        categories.Add(category);
+                    }
+                }
+            }
+            return categories;
         }
 
         public DataTable ExecuteQuery(string query)
