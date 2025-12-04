@@ -66,7 +66,6 @@ namespace up.Pages
 
             if (found && currentEmployee != null)
             {
-                MessageBox.Show($"Добро пожаловать, {currentEmployee.full_name}!", "Успешный вход", MessageBoxButton.OK, MessageBoxImage.Information);
                 string roleConnection = db.GetConnection(currentEmployee.position);
                 MainWindow.mainWindow.frame.Navigate(new Pages.Navigation(currentEmployee));
 

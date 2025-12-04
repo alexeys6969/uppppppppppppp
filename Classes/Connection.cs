@@ -52,13 +52,13 @@ namespace up.Classes
             switch (position.ToLower())
             {
                 case "администратор":
-                    return "Server=LAPTOP3019 Database=music_store; User Id=admin; Password=Admin12345; TrustServerCertificate=true;";
+                    return "Server=LAPTOP3019 Database=music_store; User Id=sa; Password=Asdfg123; TrustServerCertificate=true;";
 
                 case "менеджер":
-                    return "Server=LAPTOP3019; Database=music_store; User Id=manager; Password=Manager12345; TrustServerCertificate=true;";
+                    return "Server=LAPTOP3019; Database=music_store; User Id=sa; Password=Asdfg123; TrustServerCertificate=true;";
 
                 case "кассир":
-                    return "Server=LAPTOP3019; Database=music_store; User Id=cashier; Password=Cashier12345; TrustServerCertificate=true;";
+                    return "Server=LAPTOP3019; Database=music_store; User Id=sa; Password=Asdfg123; TrustServerCertificate=true;";
 
                 default:
                     return masterConnection;
@@ -109,6 +109,48 @@ namespace up.Classes
 
                     object result = command.ExecuteScalar();
                     return Convert.ToInt32(result);
+                }
+            }
+        }
+
+        public bool UpdateCategory(Models.Category category, string userRole)
+        {
+            string connectionString = GetConnection(userRole);
+
+            string query = @"
+        UPDATE category 
+        SET name_category = @Name, 
+            description_category = @Description 
+        WHERE category_id = @Id";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", category.Id);
+                    command.Parameters.AddWithValue("@Name", category.Name);
+                    command.Parameters.AddWithValue("@Description", category.Description);
+
+                    return command.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+
+        // Удаление категории
+        public bool DeleteCategory(int categoryId, string userRole)
+        {
+            string connectionString = GetConnection(userRole);
+
+            string query = "DELETE FROM category WHERE category_id = @Id";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", categoryId);
+                    return command.ExecuteNonQuery() > 0;
                 }
             }
         }

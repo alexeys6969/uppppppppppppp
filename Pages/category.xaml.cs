@@ -53,7 +53,7 @@ namespace up.Pages
 
         private void Back(object sender, RoutedEventArgs e)
         {
-            
+            MainWindow.mainWindow.frame.
         }
 
         private void AcceptChange(object sender, RoutedEventArgs e)
@@ -61,30 +61,50 @@ namespace up.Pages
             try
             {
                 // Получаем текущие данные из DataGrid
-                categories = (List<Models.Category>)categoriesDataGrid.ItemsSource;
+                var currentCategories = (List<Models.Category>)categoriesDataGrid.ItemsSource;
 
-                // Собираем новые/измененные категории
-                var newCategories = new List<Models.Category>();
-
-                foreach (var category in categories)
+                // Сначала обновляем существующие записи
+                foreach (var category in currentCategories)
                 {
-                    // Проверяем, новая ли это категория (например, по ID)
-                    if (category.Id == 0) // 0 или -1 для новых записей
+                    if (category.Id > 0) // Если ID > 0, значит существующая запись
                     {
-                        newCategories.Add(category);
+                        // Проверяем, изменилась ли категория
+                        var originalCategory = categories.FirstOrDefault(c => c.Id == category.Id);
+                        if (originalCategory != null &&
+                            (originalCategory.Name != category.Name ||
+                             originalCategory.Description != category.Description))
+                        {
+                            Connection.UpdateCategory(category, userRole);
+                        }
                     }
                 }
 
-                // Добавляем новые категории
-                foreach (var category in newCategories)
+                // Затем добавляем новые категории
+                foreach (var category in currentCategories)
                 {
-                    Connection.AddCategory(category, userRole);
+                    if (category.Id == 0) // Если ID == 0, значит новая запись
+                    {
+                        int newId = Connection.AddCategory(category, userRole);
+                        category.Id = newId; // Обновляем ID в объекте
+                    }
                 }
+
+                // Удаляем категории, которые были удалены из DataGrid
+                var deletedCategories = categories.Where(oldCat =>
+                    !currentCategories.Any(newCat => newCat.Id == oldCat.Id));
+
+                foreach (var deletedCategory in deletedCategories)
+                {
+                    Connection.DeleteCategory(deletedCategory.Id, userRole);
+                }
+
+                // Обновляем исходный список
+                categories = currentCategories.ToList();
 
                 MessageBox.Show("Изменения сохранены успешно!",
                                "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                // Обновляем данные
+                // Обновляем данные (если нужно)
                 LoadCategories();
             }
             catch (Exception ex)
