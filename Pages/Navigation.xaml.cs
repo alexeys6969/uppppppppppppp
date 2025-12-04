@@ -24,5 +24,10 @@ namespace up.Pages
         {
             InitializeComponent();
         }
+
+        private void CategoryBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
