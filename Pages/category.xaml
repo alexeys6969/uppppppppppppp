@@ -10,17 +10,13 @@
 
     <Grid>
         <Grid Background="DarkOrange" VerticalAlignment="Top">
+            <Button Content="Вернуться" Click="Back" Style="{StaticResource RoundedButtonStyle}"  Background="White" Foreground="Black" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Height="25" Width="100"/>
             <Label Foreground="White" x:Name="navName" Content="Категории товаров" Margin="0,10,0,10" FontFamily="Malgun Gothic" FontSize="30" VerticalAlignment="Top" HorizontalAlignment="Center"/>
         </Grid>
         <Grid>
-            <DataGrid x:Name="categoriesDataGrid" Margin="20,80,20,20" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" IsReadOnly="True" GridLinesVisibility="Horizontal" RowBackground="White" AlternatingRowBackground="LightGray">
-                <DataGrid.Columns>
-                    <!-- Столбец для Id -->
-                    <DataGridTextColumn Header="ID" 
-                                    Binding="{Binding Id}" 
-                                    Width="Auto" 
-                                    FontWeight="Bold"/>
 
+            <DataGrid AlternationCount="1" x:Name="categoriesDataGrid" Margin="20,80,20,52" AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" SelectionMode="Single" GridLinesVisibility="Horizontal" RowBackground="White" AlternatingRowBackground="LightGray">
+                <DataGrid.Columns>
                     <!-- Столбец для Name -->
                     <DataGridTextColumn Header="Название категории" 
                                     Binding="{Binding Name}" 
@@ -34,6 +30,7 @@
                     <!-- Займет 3 доли от доступного пространства -->
                 </DataGrid.Columns>
             </DataGrid>
+            <Button Content="Применить изменения" Click="AcceptChange" Style="{StaticResource RoundedButtonStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20,0,0,10" Height="25" Width="139"/>
         </Grid>
     </Grid>
 </Page>

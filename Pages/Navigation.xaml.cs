@@ -23,22 +23,18 @@ namespace up.Pages
     {
         Employees currentEmployee;
         Connection NavConnect = new Connection();
+        private string role;
         public Navigation(Employees _employee)
         {
             InitializeComponent();
             currentEmployee = _employee;
-            string role = NavConnect.GetConnection(currentEmployee.position);
+            role = NavConnect.GetConnection(currentEmployee.position);
             navName.Content += currentEmployee.full_name;
-        }
-
-        private void CategoryBtn_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void CategoryClick(object sender, RoutedEventArgs e)
         {
-
+            MainWindow.mainWindow.frame.Navigate(new Pages.Category(role, currentEmployee));
         }
 
         private void EmployeeClick(object sender, RoutedEventArgs e)

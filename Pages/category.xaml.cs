@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,19 +24,21 @@ namespace up.Pages
     {
         private Connection Connection;
         private string userRole;
-        public Category(string userPosition)
+        List<Models.Category> categories;
+        Employees employee;
+        public Category(string userPosition, Employees _employees)
         {
             InitializeComponent();
             Connection = new Connection();
             userRole = userPosition;
             LoadCategories();
+            employee = _employees;
         }
 
         private void LoadCategories()
         {
             try
             {
-                List<Models.Category> categories;
                 string roleConnection = Connection.GetConnection(userRole);
                 categories = Connection.GetCategories(roleConnection);
                 categoriesDataGrid.ItemsSource = categories;
@@ -45,6 +48,17 @@ namespace up.Pages
                 MessageBox.Show($"Ошибка загрузки данных: {ex.Message}",
                               "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void Back(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void AcceptChange(object sender, RoutedEventArgs e)
+        {
+            categories = (List<Models.Category>)categoriesDataGrid.ItemsSource;
+            Connection.AddCategory(new Models.Category(), userRole);
         }
     }
 }

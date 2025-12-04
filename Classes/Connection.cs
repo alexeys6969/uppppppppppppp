@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using up.Models;
 
 namespace up.Classes
@@ -64,11 +65,11 @@ namespace up.Classes
             }
         }
 
-        public List<Category> GetCategories(string roleConnectionString = null)
+        public List<Category> GetCategories(string roleConnectionString)
         {
             List<Category> categories = new List<Category>();
             string connectionString = roleConnectionString;
-            string query = "SELECT Id, Name, Description FROM Categories";
+            string query = "SELECT * FROM category";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -89,6 +90,27 @@ namespace up.Classes
                 }
             }
             return categories;
+        }
+
+        public int AddCategory(Category category, string Connection)
+        {
+            string query = @"
+            INSERT INTO category (name_category, description_category) 
+            VALUES (@Name, @Description);
+        ";
+
+            using (SqlConnection connection = new SqlConnection(Connection))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Name", category.Name);
+                    command.Parameters.AddWithValue("@Description", category.Description);
+
+                    object result = command.ExecuteScalar();
+                    return Convert.ToInt32(result);
+                }
+            }
         }
 
         public DataTable ExecuteQuery(string query)
