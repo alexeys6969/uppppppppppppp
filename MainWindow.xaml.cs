@@ -21,14 +21,11 @@ namespace up
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Employees currentEmployee;
-        private string connectionString;
-        private Connection db;
         public static MainWindow mainWindow;
         public MainWindow()
         {
             InitializeComponent();
-            frame.Navigate(new Pages.Authorization(currentEmployee));
+            frame.Navigate(new Pages.Authorization());
             mainWindow = this;
         }
     }

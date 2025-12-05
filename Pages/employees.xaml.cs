@@ -37,27 +37,27 @@ namespace up.Pages
         }
         private void LoadEmployees()
         {
-            try
-            {
-                string roleConnection = Connection.GetConnection(userRole);
-                var loadedEmployees = Connection.GetEmployees(roleConnection);
+            //try
+            //{
+            //    string roleConnection = Connection.GetConnection(userRole);
+            //    var loadedEmployees = Connection.GetEmployees(roleConnection);
 
-                // Используем ObservableCollection для автоматического обновления UI
-                _employees = new ObservableCollection<Employees>(loadedEmployees);
-                employeesDataGrid.ItemsSource = _employees;
-                MessageBox.Show($"Загружено {_employees.Count} сотрудников",
-              "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка загрузки данных: {ex.Message}",
-                              "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            //    // Используем ObservableCollection для автоматического обновления UI
+            //    _employees = new ObservableCollection<Employees>(loadedEmployees);
+            //    employeesDataGrid.ItemsSource = _employees;
+            //    MessageBox.Show($"Загружено {_employees.Count} сотрудников",
+            //  "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show($"Ошибка загрузки данных: {ex.Message}",
+            //                  "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            //}
         }
 
         private void Back(object sender, RoutedEventArgs e)
         {
-            MainWindow.mainWindow.frame.Navigate(new Pages.Navigation(employee));
+            //MainWindow.mainWindow.frame.Navigate(new Pages.Navigation(employee));
         }
 
         private void AcceptChange(object sender, RoutedEventArgs e)

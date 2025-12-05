@@ -9,7 +9,7 @@
       Title="Navigation" Background="White">
     <Grid>
         <Grid Background="DarkOrange" VerticalAlignment="Top">
-            <Label Foreground="White" x:Name="navName" Content="Здравстуйте " Margin="0,10,0,10" FontFamily="Malgun Gothic" FontSize="30" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+            <Label Foreground="White" x:Name="navName" Content="Система администрирования музыкального магазина" Margin="0,10,0,10" FontFamily="Malgun Gothic" FontSize="30" VerticalAlignment="Top" HorizontalAlignment="Center"/>
         </Grid>
         <Grid Margin="0,70,0,0">
             <ScrollViewer>

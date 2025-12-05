@@ -21,20 +21,16 @@ namespace up.Pages
     /// </summary>
     public partial class Navigation : Page
     {
-        Employees currentEmployee;
-        Connection NavConnect = new Connection();
-        private string role;
-        public Navigation(Employees _employee)
+        public string connection;
+        public Navigation(string _connection)
         {
             InitializeComponent();
-            currentEmployee = _employee;
-            role = NavConnect.GetConnection(currentEmployee.position);
-            navName.Content += currentEmployee.full_name;
+            connection = _connection;
         }
 
         private void CategoryClick(object sender, RoutedEventArgs e)
         {
-            MainWindow.mainWindow.frame.Navigate(new Pages.Category(role, currentEmployee));
+            MainWindow.mainWindow.frame.Navigate(new Pages.Category(connection));
         }
 
         private void EmployeeClick(object sender, RoutedEventArgs e)

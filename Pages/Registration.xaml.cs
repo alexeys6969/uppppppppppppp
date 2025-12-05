@@ -24,5 +24,10 @@ namespace up.Pages
         {
             InitializeComponent();
         }
+
+        private void registration(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

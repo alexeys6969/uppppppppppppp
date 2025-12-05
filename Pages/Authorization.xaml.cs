@@ -23,77 +23,43 @@ namespace up.Pages
     /// </summary>
     public partial class Authorization : Page
     {
-        Employees employee;
-        Connection connect = new Connection();
-        public Authorization(Employees _employee)
+        public Authorization()
         {
             InitializeComponent();
-            employee = _employee;
         }
 
         private void authorization(object sender, RoutedEventArgs e)
         {
-            string Login = login.Text.Trim();
-            string Password = password.Password;
+            string dbUser = login.Text.Trim();
+            string dbPass = password.Password.Trim();
 
-            Connection db = new Connection();
-
-            DataTable employeesDT = db.ExecuteQuery("SELECT * FROM employee");
-
-            bool found = false;
-            Employees currentEmployee = null;
-
-            foreach (DataRow row in employeesDT.Rows)
+            if (string.IsNullOrEmpty(dbUser) || string.IsNullOrEmpty(dbPass))
             {
-                string dbLogin = row["login_employee"].ToString();
-                string dbPasswordHash = row["password_hash"].ToString();
-                string hashedInput = db.HashPassword(Password);
-
-                if (Login == dbLogin && hashedInput == dbPasswordHash)
-                {
-                    found = true;
-                    currentEmployee = new Employees
-                    {
-                        employee_id = Convert.ToInt32(row["employee_id"]),
-                        full_name = row["full_name"].ToString(),
-                        position = row["position"].ToString(),
-                        login = dbLogin,
-                        password = dbPasswordHash
-                    };
-                    break;
-                }
+                MessageBox.Show("Введите логин и пароль для подключения к серверу", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
             }
 
-            if (found && currentEmployee != null)
+            string tempConnString = CurrentUser.BuildConnectionString(dbUser, dbPass);
+
+            try
             {
-                string roleConnection = db.GetConnection(currentEmployee.position);
-                MainWindow.mainWindow.frame.Navigate(new Pages.Navigation(currentEmployee));
-
-                try
+                using (var conn = new SqlConnection(tempConnString))
                 {
-                    using (var conn = new SqlConnection(roleConnection))
-                    {
-                        conn.Open();
-
-                        currentEmployee.password = roleConnection;
-
-                    }
+                    conn.Open();
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Ошибка подключения: {ex.Message}\n\n" +
-                                  "Возможно, не созданы пользователи SQL Server для ролей.",
-                                  "Ошибка прав",
-                                  MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+
+                CurrentUser.ActiveConnectionString = tempConnString;
+
+                MessageBox.Show("Подключение к серверу успешно!", "Система");
+
+                // Переходим на окно авторизации
+                MainWindow.mainWindow.frame.Navigate(new Pages.Navigation(CurrentUser.ActiveConnectionString));
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Неверный логин или пароль",
-                              "Ошибка входа",
-                              MessageBoxButton.OK, MessageBoxImage.Error);
-                login.Text = "";
-                password.Password = "";
+                MessageBox.Show($"Ошибка подключения к SQL Server:\n{ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
