@@ -14,7 +14,7 @@ namespace up.Classes
     public class Connection
     {
 
-        private string masterConnection = "Server=LAPTOP3019; Database=music_store; User Id=sa; Password=Asdfg123; TrustServerCertificate=true;";
+        private string masterConnection = "Server=WINSERV-ISP-23-\\WINSERVSQL; Database=music_store; User Id=sa; Password=Asdfg123_; TrustServerCertificate=true;";
 
         public DataRow CheckLogin(string login, string password)
         {
@@ -52,13 +52,13 @@ namespace up.Classes
             switch (position.ToLower())
             {
                 case "администратор":
-                    return "Server=LAPTOP3019 Database=music_store; User Id=sa; Password=Asdfg123; TrustServerCertificate=true;";
+                    return "Server=WINSERV-ISP-23-\\WINSERVSQL; Database=music_store; User Id=sa; Password=Asdfg123_; TrustServerCertificate=true;";
 
                 case "менеджер":
-                    return "Server=LAPTOP3019; Database=music_store; User Id=sa; Password=Asdfg123; TrustServerCertificate=true;";
+                    return "Server=WINSERV-ISP-23-\\WINSERVSQL; Database=music_store; User Id=sa; Password=Asdfg123_; TrustServerCertificate=true;";
 
                 case "кассир":
-                    return "Server=LAPTOP3019; Database=music_store; User Id=sa; Password=Asdfg123; TrustServerCertificate=true;";
+                    return "Server=WINSERV-ISP-23-\\WINSERVSQL; Database=music_store; User Id=sa; Password=Asdfg123_; TrustServerCertificate=true;";
 
                 default:
                     return masterConnection;
