@@ -45,6 +45,8 @@ namespace up.Pages
                 // Используем ObservableCollection для автоматического обновления UI
                 _employees = new ObservableCollection<Employees>(loadedEmployees);
                 employeesDataGrid.ItemsSource = _employees;
+                MessageBox.Show($"Загружено {_employees.Count} сотрудников",
+              "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {

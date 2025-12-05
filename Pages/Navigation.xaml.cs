@@ -39,7 +39,7 @@ namespace up.Pages
 
         private void EmployeeClick(object sender, RoutedEventArgs e)
         {
-
+            MainWindow.mainWindow.frame.Navigate(new Pages.employees(role, currentEmployee));
         }
 
         private void ProductClick(object sender, RoutedEventArgs e)

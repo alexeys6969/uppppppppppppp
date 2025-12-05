@@ -96,6 +96,11 @@ namespace up.Pages
                 password.Password = "";
             }
         }
+
+        private void registration(object sender, RoutedEventArgs e)
+        {
+
+        }
     } 
 }
             

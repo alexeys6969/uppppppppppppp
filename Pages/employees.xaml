@@ -19,13 +19,13 @@
                 <DataGrid.Columns>
                     <!-- Столбец для Name -->
                     <DataGridTextColumn Header="Имя сотрудника" 
-                                Binding="{Binding Name}" 
+                                Binding="{Binding full_name}" 
                                 Width="1*"/>
                     <!-- Займет 2 доли от доступного пространства -->
 
                     <!-- Столбец для Description -->
                     <DataGridTextColumn Header="Должность" 
-                                Binding="{Binding Position}" 
+                                Binding="{Binding position}" 
                                 Width="1*"/>
                     <!-- Займет 3 доли от доступного пространства -->
                 </DataGrid.Columns>

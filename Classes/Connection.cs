@@ -96,7 +96,7 @@ namespace up.Classes
         {
             List<Employees> employees = new List<Employees>();
             string connectionString = roleConnectionString;
-            string query = "SELECT * FROM employees";
+            string query = "SELECT full_name, position FROM employee";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -108,8 +108,8 @@ namespace up.Classes
                     {
                         Employees em = new Employees
                         {
-                            full_name = reader.GetString(1),
-                            position = reader.GetString(2)
+                            full_name = reader.GetString(0),
+                            position = reader.GetString(1)
                         };
                         employees.Add(em);
                     }
