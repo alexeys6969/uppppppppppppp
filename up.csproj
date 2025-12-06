@@ -99,6 +99,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\Return.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Sales.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Product.cs" />
@@ -130,6 +138,12 @@
     </Compile>
     <Compile Include="Pages\Reports.xaml.cs">
       <DependentUpon>Reports.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Return.xaml.cs">
+      <DependentUpon>Return.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Sales.xaml.cs">
+      <DependentUpon>Sales.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

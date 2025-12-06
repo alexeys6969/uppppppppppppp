@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Common;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,29 +21,29 @@ using up.Models;
 namespace up.Pages
 {
     /// <summary>
-    /// Логика взаимодействия для Reports.xaml
+    /// Логика взаимодействия для Sales.xaml
     /// </summary>
-    public partial class Reports : Page
+    public partial class Sales : Page
     {
         private Connection Connection;
         private string connect;
-        private ObservableCollection<Report> _report;
-        public Reports(string _connection)
+        private ObservableCollection<Sale> _sale;
+        public Sales(string _connection)
         {
             InitializeComponent();
             Connection = new Connection();
             connect = _connection;
-            LoadReports();
+            LoadSales();
         }
 
-        private void LoadReports()
+        private void LoadSales()
         {
             try
             {
-                var loadedReports = Connection.GetReport(connect);
+                var loadedSales = Connection.GetSale(connect);
 
-                _report = new ObservableCollection<Report>(loadedReports);
-                reportsDataGrid.ItemsSource = _report;
+                _sale = new ObservableCollection<Sale>(loadedSales);
+                salesDataGrid.ItemsSource = _sale;
             }
             catch (Exception ex)
             {
@@ -59,47 +61,47 @@ namespace up.Pages
         {
             try
             {
-                reportsDataGrid.CommitEdit();
-                var currentReports = _report.ToList();
-                var originalReports = Connection.GetReport(connect).ToList();
+                salesDataGrid.CommitEdit();
+                var currentSales = _sale.ToList();
+                var originalSales = Connection.GetSale(connect).ToList();
 
-                foreach (var reports in currentReports)
+                foreach (var sales in currentSales)
                 {
-                    if (reports.Id > 0) // Существующая запись
+                    if (sales.Id > 0) // Существующая запись
                     {
-                        var originalReport = originalReports.FirstOrDefault(c => c.Id == reports.Id);
-                        if (originalReport != null &&
-                            (originalReport.ReportType != reports.ReportType ||
-                             originalReport.PeriodEnd != reports.PeriodEnd))
+                        var originalSale = originalSales.FirstOrDefault(c => c.Id == sales.Id);
+                        if (originalSale != null &&
+                            (originalSale.SaleNumber != sales.SaleNumber ||
+                             originalSale.Id != sales.Id))
                         {
-                            bool updated = Connection.UpdateReport(reports, connect);
+                            bool updated = Connection.UpdateSale(sales, connect);
                             if (!updated)
                             {
-                                MessageBox.Show($"Не удалось обновить отчет '{reports.ReportType}'",
+                                MessageBox.Show($"Не удалось обновить продажу '{sales.SaleNumber}'",
                                                "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                             }
                         }
                     }
                 }
 
-                foreach (var reports in currentReports.Where(c => c.Id == 0))
+                foreach (var sales in currentSales.Where(c => c.Id == 0))
                 {
-                    int newId = Connection.AddReport(reports, connect);
+                    int newId = Connection.AddSale(sales, connect);
                     if (newId > 0)
                     {
-                        reports.Id = newId;
+                        sales.Id = newId;
                     }
                 }
 
-                var reportsToDelete = originalReports.Where(oldRep =>
-                    !currentReports.Any(newRep => newRep.Id == oldRep.Id)).ToList();
+                var salesToDelete = originalSales.Where(oldSale =>
+                    !currentSales.Any(newSale => newSale.Id == oldSale.Id)).ToList();
 
-                foreach (var repToDelete in reportsToDelete)
+                foreach (var saleToDelete in salesToDelete)
                 {
-                    bool deleted = Connection.DeleteReport(repToDelete.Id, connect);
+                    bool deleted = Connection.DeleteSale(saleToDelete.Id, connect);
                     if (!deleted)
                     {
-                        MessageBox.Show($"Не удалось удалить отчет '{repToDelete.ReportType}'",
+                        MessageBox.Show($"Не удалось удалить продажу '{saleToDelete.SaleNumber}'",
                                        "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                 }
@@ -107,13 +109,13 @@ namespace up.Pages
                 MessageBox.Show("Изменения сохранены успешно!",
                                "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                LoadReports();
+                LoadSales();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка сохранения: {ex.Message}",
                                "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                LoadReports();
+                LoadSales();
             }
         }
     }

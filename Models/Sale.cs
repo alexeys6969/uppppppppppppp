@@ -12,9 +12,11 @@ namespace up.Models
         public string SaleNumber { get; set; }
         public int EmployeeId { get; set; }
         public DateTime SaleDate { get; set; }
-        public double TotalAmount { get; set; }
+        public decimal TotalAmount { get; set; }
         public string PaymentStatus { get; set; }
         public string PaymentMethod { get; set; }
+
+        public string EmployeeName { get; set; }
 
     }
 }

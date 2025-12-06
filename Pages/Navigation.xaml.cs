@@ -50,12 +50,12 @@ namespace up.Pages
 
         private void ReturnClick(object sender, RoutedEventArgs e)
         {
-
+            MainWindow.mainWindow.frame.Navigate(new Pages.Return());
         }
 
         private void SaleClick(object sender, RoutedEventArgs e)
         {
-
+            MainWindow.mainWindow.frame.Navigate(new Pages.Sales(connection));
         }
 
         private void SupplierClick(object sender, RoutedEventArgs e)

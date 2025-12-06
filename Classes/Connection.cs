@@ -468,6 +468,124 @@ namespace up.Classes
         }
 
         #endregion
+
+        #region Sale
+
+        public List<Sale> GetSale(string roleConnectionString)
+        {
+            List<Sale> sales = new List<Sale>();
+            string connectionString = roleConnectionString;
+            string query = @"SELECT sale_id, sale_number, full_name, sale_date, total_amount, payment_status, payment_method 
+        FROM sale
+        INNER JOIN employee ON sale.employee_id = employee.employee_id";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Sale sale = new Sale
+                        {
+                            Id = reader.GetInt32(0),
+                            SaleNumber = reader.GetString(1),
+                            EmployeeName = reader.GetString(2),
+                            SaleDate = reader.GetDateTime(3),
+                            TotalAmount = reader.GetDecimal(4),
+                            PaymentStatus = reader.GetString(5),
+                            PaymentMethod = reader.GetString(6)
+                        };
+                        sales.Add(sale);
+                    }
+                }
+            }
+            return sales;
+        }
+
+        public int AddSale(Sale sale, string Connection)
+        {
+            string query = @"
+            INSERT INTO sale (sale_number, employee_id, sale_date, total_amount, payment_status, payment_method)
+            VALUES (
+            @Number,
+            (SELECT employee_id FROM employee WHERE full_name = @Name),
+            @Date, 
+            @Amount,
+            @Status,
+            @Method
+            )";
+
+            using (SqlConnection connection = new SqlConnection(Connection))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Number", sale.SaleNumber);
+                    command.Parameters.AddWithValue("@Name", sale.EmployeeName);
+                    command.Parameters.AddWithValue("@Date", sale.SaleDate);
+                    command.Parameters.AddWithValue("@Amount", sale.TotalAmount);
+                    command.Parameters.AddWithValue("@Status", sale.PaymentStatus);
+                    command.Parameters.AddWithValue("@Method", sale.PaymentMethod);
+
+                    object result = command.ExecuteScalar();
+                    return Convert.ToInt32(result);
+                }
+            }
+        }
+
+        public bool UpdateSale(Sale sale, string userrole)
+        {
+            string connectionstring = userrole;
+
+            string query = @"UPDATE sale 
+                 SET 
+                    sale_number = @Number,
+                    employee_id = (SELECT employee_id FROM employee WHERE full_name = @Name),                    
+                    sale_date = @Date,
+                    total_amount = @Amount,
+                    payment_status = @Status,
+                    payment_method = @Method
+                 WHERE sale_id = @Id;";
+
+            using (SqlConnection connection = new SqlConnection(connectionstring))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", sale.Id);
+                    command.Parameters.AddWithValue("@Number", sale.SaleNumber);
+                    command.Parameters.AddWithValue("@Date", sale.SaleDate);
+                    command.Parameters.AddWithValue("@Amount", sale.TotalAmount);
+                    command.Parameters.AddWithValue("@Status", sale.PaymentStatus);
+                    command.Parameters.AddWithValue("@Method", sale.PaymentMethod);
+                    command.Parameters.AddWithValue("@Name", sale.EmployeeName);
+
+                    return command.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+
+        // Удаление категории
+        public bool DeleteSale(int saleId, string userRole)
+        {
+            string connectionString = userRole;
+
+            string query = "DELETE FROM sale WHERE sale_id = @Id";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", saleId);
+                    return command.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+
+        #endregion
         public string HashPassword(string password)
         {
             using (SHA256 sha256 = SHA256.Create())
