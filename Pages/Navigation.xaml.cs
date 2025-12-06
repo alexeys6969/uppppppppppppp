@@ -40,7 +40,7 @@ namespace up.Pages
 
         private void ProductClick(object sender, RoutedEventArgs e)
         {
-
+            MainWindow.mainWindow.frame.Navigate(new Pages.Products(connection));
         }
 
         private void ReportClick(object sender, RoutedEventArgs e)

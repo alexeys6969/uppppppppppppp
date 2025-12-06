@@ -233,7 +233,129 @@ namespace up.Classes
         }
         #endregion
 
-        
+        #region Product
+
+        public List<Product> GetProduct(string roleConnectionString)
+        {
+            List<Product> products = new List<Product>();
+            string connectionString = roleConnectionString;
+            string query = @"
+        SELECT product_id, article, name_product, brand, model, price, 
+               quantity_in_stock, category.category_id, name_category 
+        FROM product 
+        INNER JOIN category ON product.category_id = category.category_id";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Product product = new Product
+                        {
+                            Id = reader.GetInt32(0),
+                            Article = reader.GetString(1),
+                            NameProduct = reader.GetString(2),
+                            Brand = reader.GetString(3),
+                            Model = reader.GetString(4),
+                            Price = reader.GetDecimal(5),
+                            QuantityStock = reader.GetInt32(6),
+                            CategoryId = reader.GetInt32(7),
+                            CategoryName = reader.GetString(8)
+                        };
+                        products.Add(product);
+                    }
+                }
+            }
+            return products;
+        }
+
+        public int AddProduct(Product product, string Connection)
+        {
+            string query = @"
+            INSERT INTO product (article, name_product, brand, model, price, quantity_in_stock, category_id)
+            VALUES (
+            @article, 
+            @name_product, 
+            @brand, 
+            @model, 
+            @price, 
+            @quantity_in_stock,
+            (SELECT category_id FROM category WHERE name_category = @category_name))";
+
+            using (SqlConnection connection = new SqlConnection(Connection))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@article", product.Article);
+                    command.Parameters.AddWithValue("@name_product", product.NameProduct);
+                    command.Parameters.AddWithValue("@brand", product.Brand);
+                    command.Parameters.AddWithValue("@model", product.Model);
+                    command.Parameters.AddWithValue("@price", product.Price);
+                    command.Parameters.AddWithValue("@quantity_in_stock", product.QuantityStock);
+                    command.Parameters.AddWithValue("@category_name", product.CategoryName);
+
+                    object result = command.ExecuteScalar();
+                    return Convert.ToInt32(result);
+                }
+            }
+        }
+
+        public bool UpdateProduct(Product product, string userrole)
+        {
+            string connectionstring = userrole;
+
+            string query = @"UPDATE product 
+            SET 
+            article = @article,
+            name_product = @name_product,
+            brand = @brand,
+            model = @model,
+            price = @price,
+            quantity_in_stock = @quantity_in_stock,
+            category_id = (SELECT category_id FROM category WHERE name_category = @category_name)
+            WHERE product_id = @product_id;";
+
+            using (SqlConnection connection = new SqlConnection(connectionstring))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@product_id", product.Id);
+                    command.Parameters.AddWithValue("@article", product.Article);
+                    command.Parameters.AddWithValue("@name_product", product.NameProduct);
+                    command.Parameters.AddWithValue("@brand", product.Brand);
+                    command.Parameters.AddWithValue("@model", product.Model);
+                    command.Parameters.AddWithValue("@price", product.Price);
+                    command.Parameters.AddWithValue("@quantity_in_stock", product.QuantityStock);
+                    command.Parameters.AddWithValue("@category_name", product.CategoryName);
+
+                    return command.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+
+        //// Удаление категории
+        public bool DeleteProduct(int productId, string userRole)
+        {
+            string connectionString = userRole;
+
+            string query = "DELETE FROM product WHERE product_id = @product_id;";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@product_id", productId);
+                    return command.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+        #endregion
         public string HashPassword(string password)
         {
             using (SHA256 sha256 = SHA256.Create())

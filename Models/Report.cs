@@ -14,5 +14,6 @@ namespace up.Models
         public DateTime PeriodEnd { get; set; }
         public DateTime CreatedAt { get; set; }
         public int CreatedBy { get; set; }
+        public string NameEmployee { get; set; }
     }
 }
