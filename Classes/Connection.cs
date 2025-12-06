@@ -356,6 +356,118 @@ namespace up.Classes
             }
         }
         #endregion
+
+        #region Report
+
+        public List<Report> GetReport(string roleConnectionString)
+        {
+            List<Report> products = new List<Report>();
+            string connectionString = roleConnectionString;
+            string query = @"SELECT report_id, report_type, period_start, period_end, created_at, full_name 
+        FROM report
+        INNER JOIN employee ON report.created_by = employee.employee_id";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Report report = new Report
+                        {
+                            Id = reader.GetInt32(0),
+                            ReportType = reader.GetString(1),
+                            PeriodStart = reader.GetDateTime(2),
+                            PeriodEnd = reader.GetDateTime(3),
+                            CreatedAt = reader.GetDateTime(4),
+                            NameEmployee = reader.GetString(5)
+                        };
+                        products.Add(report);
+                    }
+                }
+            }
+            return products;
+        }
+
+        public int AddReport(Report report, string Connection)
+        {
+            string query = @"
+            INSERT INTO report (report_type, period_start, period_end, created_at, created_by)
+            VALUES (
+            @Type, 
+            @Start, 
+            @End, 
+            @At,
+            (SELECT employee_id FROM employee WHERE full_name = @Name))";
+
+            using (SqlConnection connection = new SqlConnection(Connection))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Type", report.ReportType);
+                    command.Parameters.AddWithValue("@Start", report.PeriodStart);
+                    command.Parameters.AddWithValue("@End", report.PeriodEnd);
+                    command.Parameters.AddWithValue("@At", report.CreatedAt);
+                    command.Parameters.AddWithValue("@Name", report.NameEmployee);
+
+                    object result = command.ExecuteScalar();
+                    return Convert.ToInt32(result);
+                }
+            }
+        }
+
+        public bool UpdateReport(Report report, string userrole)
+        {
+            string connectionstring = userrole;
+
+            string query = @"UPDATE report 
+                 SET 
+                    report_type = @Type,
+                    period_start = @Start,
+                    period_end = @End,
+                    created_at = @At,
+                    created_by = (SELECT employee_id FROM employee WHERE full_name = @Name)
+                 WHERE report_id = @Id;";
+
+            using (SqlConnection connection = new SqlConnection(connectionstring))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", report.Id);
+                    command.Parameters.AddWithValue("@Type", report.ReportType);
+                    command.Parameters.AddWithValue("@Start", report.PeriodStart);
+                    command.Parameters.AddWithValue("@End", report.PeriodEnd);
+                    command.Parameters.AddWithValue("@At", report.CreatedAt);
+                    command.Parameters.AddWithValue("@Name", report.NameEmployee);
+
+                    return command.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+
+        // Удаление категории
+        public bool DeleteReport(int reportId, string userRole)
+        {
+            string connectionString = userRole;
+
+            string query = "DELETE FROM report WHERE report_id = @Id";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", reportId);
+                    return command.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+
+        #endregion
         public string HashPassword(string password)
         {
             using (SHA256 sha256 = SHA256.Create())

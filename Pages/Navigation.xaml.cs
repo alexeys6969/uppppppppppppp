@@ -45,7 +45,7 @@ namespace up.Pages
 
         private void ReportClick(object sender, RoutedEventArgs e)
         {
-
+            MainWindow.mainWindow.frame.Navigate(new Pages.Reports(connection));
         }
 
         private void ReturnClick(object sender, RoutedEventArgs e)
