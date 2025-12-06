@@ -11,9 +11,11 @@ namespace up.Models
         public int Id { get; set; }
         public string ReturnNumber { get; set; }
         public int SaleId { get; set; }
+        public string SaleNumber { get; set; }
         public int EmployeeId { get; set; }
+        public string EmployeeName { get; set; }
         public DateTime ReturnDate { get; set; }
         public string Reason { get; set; }
-        public double TotalRefund { get; set; }
+        public decimal TotalRefund { get; set; }
     }
 }

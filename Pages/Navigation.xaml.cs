@@ -50,7 +50,7 @@ namespace up.Pages
 
         private void ReturnClick(object sender, RoutedEventArgs e)
         {
-            MainWindow.mainWindow.frame.Navigate(new Pages.Return());
+            MainWindow.mainWindow.frame.Navigate(new Pages.Return(connection));
         }
 
         private void SaleClick(object sender, RoutedEventArgs e)

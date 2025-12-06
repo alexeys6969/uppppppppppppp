@@ -15,13 +15,14 @@
         </Grid>
         <Grid>
 
-            <DataGrid AlternationCount="1" x:Name="reportsDataGrid" Margin="20,80,20,52" AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" SelectionMode="Single" GridLinesVisibility="Horizontal" RowBackground="White" AlternatingRowBackground="LightGray">
+            <DataGrid AlternationCount="1" x:Name="returnsDataGrid" Margin="20,80,20,52" AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" SelectionMode="Single" GridLinesVisibility="Horizontal" RowBackground="White" AlternatingRowBackground="LightGray">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Тип" Binding="{Binding ReportType}" Width="1*"/>
-                    <DataGridTextColumn Header="С" Binding="{Binding PeriodStart}" Width="1*"/>
-                    <DataGridTextColumn Header="По" Binding="{Binding PeriodEnd}" Width="1*"/>
-                    <DataGridTextColumn Header="Создан" Binding="{Binding CreatedAt}" Width="1*"/>
-                    <DataGridTextColumn Header="Автор" Binding="{Binding NameEmployee}" Width="1*"/>
+                    <DataGridTextColumn Header="Номер" Binding="{Binding ReturnNumber}" Width="1*"/>
+                    <DataGridTextColumn Header="Номер продажи" Binding="{Binding SaleNumber}" Width="1*"/>
+                    <DataGridTextColumn Header="Сотрудник" Binding="{Binding EmployeeName}" Width="1*"/>
+                    <DataGridTextColumn Header="Дата" Binding="{Binding ReturnDate}" Width="1*"/>
+                    <DataGridTextColumn Header="Причина" Binding="{Binding Reason}" Width="1*"/>
+                    <DataGridTextColumn Header="Сумма" Binding="{Binding TotalRefund}" Width="1*"/>
                 </DataGrid.Columns>
             </DataGrid>
             <Button Content="Применить изменения" Click="AcceptChange" Style="{StaticResource RoundedButtonStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20,0,0,10" Height="25" Width="139"/>

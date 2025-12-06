@@ -4,9 +4,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:up.Pages"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="Navigation" Background="White">
+      mc:Ignorable="d" d:DesignWidth="800"
+      Title="Navigation" Background="White" Height="583">
     <Grid>
         <Grid Background="DarkOrange" VerticalAlignment="Top">
             <Label Foreground="White" x:Name="navName" Content="Система администрирования музыкального магазина" Margin="0,10,0,10" FontFamily="Malgun Gothic" FontSize="30" VerticalAlignment="Top" HorizontalAlignment="Center"/>
@@ -18,10 +17,10 @@
                     <Button Content="Сотрудники" Click="EmployeeClick" x:Name="EmployeesBtn" FontSize="20"  Style="{StaticResource RoundedButtonStyle}" Height="50" Margin="30,10,30,0" HorizontalAlignment="Center" Width="672" VerticalAlignment="Top"/>
                     <Button Content="Товары" Click="ProductClick" x:Name="ProductBtn" FontSize="20"  Style="{StaticResource RoundedButtonStyle}" Height="50" Margin="30,10,30,0" HorizontalAlignment="Center" Width="672" VerticalAlignment="Top"/>
                     <Button Content="Отчеты" Click="ReportClick" x:Name="ReportBtn" FontSize="20"  Style="{StaticResource RoundedButtonStyle}" Height="50" Margin="30,10,30,0" HorizontalAlignment="Center" Width="672" VerticalAlignment="Top"/>
-                    <Button Content="Возвраты" Click="ReturnClick" x:Name="ReturnBtn" FontSize="20"  Style="{StaticResource RoundedButtonStyle}" Height="50" Margin="30,10,30,0" HorizontalAlignment="Center" Width="672" VerticalAlignment="Top"/>
                     <Button Content="Продажи" Click="SaleClick" x:Name="SaleBtn" FontSize="20"  Style="{StaticResource RoundedButtonStyle}" Height="50" Margin="30,10,30,0" HorizontalAlignment="Center" Width="672" VerticalAlignment="Top"/>
                     <Button Content="Поставщики" Click="SupplierClick" x:Name="SupplierBtn" FontSize="20"  Style="{StaticResource RoundedButtonStyle}" Height="50" Margin="30,10,30,0" HorizontalAlignment="Center" Width="672" VerticalAlignment="Top"/>
                     <Button Content="Поставки" Click="OrderClick" x:Name="OrderBtn" FontSize="20"  Style="{StaticResource RoundedButtonStyle}" Height="50" Margin="30,10,30,0" HorizontalAlignment="Center" Width="672" VerticalAlignment="Top"/>
+                    <Button Content="Возвраты" Click="ReturnClick" x:Name="ReturnBtn" FontSize="20"  Style="{StaticResource RoundedButtonStyle}" Height="50" Margin="30,10,30,0" HorizontalAlignment="Center" Width="672" VerticalAlignment="Top"/>
                 </StackPanel>
             </ScrollViewer>
         </Grid>

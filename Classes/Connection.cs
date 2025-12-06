@@ -586,6 +586,125 @@ namespace up.Classes
         }
 
         #endregion
+
+        #region Return
+
+        public List<Returns> GetReturn(string roleConnectionString)
+        {
+            List<Returns> returns = new List<Returns>();
+            string connectionString = roleConnectionString;
+            string query = @"SELECT return_id, sale.sale_number, employee.full_name, return_number, return_date, reason, total_refund
+        FROM returns
+        INNER JOIN sale ON returns.sale_id = sale.sale_id
+		INNER JOIN employee ON returns.employee_id = employee.employee_id";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Returns _return = new Returns
+                        {
+                            Id = reader.GetInt32(0),
+                            SaleNumber = reader.GetString(1),
+                            EmployeeName = reader.GetString(2),
+                            ReturnNumber = reader.GetString(3),
+                            ReturnDate = reader.GetDateTime(4),
+                            Reason = reader.GetString(5),
+                            TotalRefund = reader.GetDecimal(6)
+                        };
+                        returns.Add(_return);
+                    }
+                }
+            }
+            return returns;
+        }
+
+        public int AddReturn(Returns returns, string Connection)
+        {
+            string query = @"
+            INSERT INTO returns (sale_id, employee_id, return_number, return_date, reason, total_refund)
+            SELECT 
+            (SELECT sale_id FROM sale WHERE sale_number = @sale_number),
+            (SELECT employee_id FROM employee WHERE full_name = @employee_name),
+            @return_number,
+            @return_date,
+            @reason,
+            @total_refund;";
+
+            using (SqlConnection connection = new SqlConnection(Connection))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@sale_number", returns.SaleNumber);
+                    command.Parameters.AddWithValue("@employee_name", returns.EmployeeName);
+                    command.Parameters.AddWithValue("@return_number", returns.ReturnNumber);
+                    command.Parameters.AddWithValue("@return_date", returns.ReturnDate);
+                    command.Parameters.AddWithValue("@reason", returns.Reason);
+                    command.Parameters.AddWithValue("@total_refund", returns.TotalRefund);
+
+                    object result = command.ExecuteScalar();
+                    return Convert.ToInt32(result);
+                }
+            }
+        }
+
+        public bool UpdateReturn(Returns returns, string userrole)
+        {
+            string connectionstring = userrole;
+
+            string query = @"UPDATE returns 
+            SET 
+            sale_id = (SELECT sale_id FROM sale WHERE sale_number = @sale_number),
+            employee_id = (SELECT employee_id FROM employee WHERE full_name = @employee_name),
+            return_number = @return_number,
+            return_date = @return_date,
+            reason = @reason,
+            total_refund = @total_refund
+            WHERE return_id = @return_id;";
+
+            using (SqlConnection connection = new SqlConnection(connectionstring))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", returns.Id);
+                    command.Parameters.AddWithValue("@sale_number", returns.SaleNumber);
+                    command.Parameters.AddWithValue("@employee_name", returns.EmployeeName);
+                    command.Parameters.AddWithValue("@return_number", returns.ReturnNumber);
+                    command.Parameters.AddWithValue("@return_date", returns.ReturnDate);
+                    command.Parameters.AddWithValue("@reason",  returns.Reason);
+                    command.Parameters.AddWithValue("@total_refund", returns.TotalRefund);
+
+                    return command.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+
+        // Удаление категории
+        public bool DeleteReturn(int returnId, string userRole)
+        {
+            string connectionString = userRole;
+
+            string query = "DELETE FROM returns WHERE return_id = @Id";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", returnId);
+                    return command.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+
+        #endregion
+
         public string HashPassword(string password)
         {
             using (SHA256 sha256 = SHA256.Create())
