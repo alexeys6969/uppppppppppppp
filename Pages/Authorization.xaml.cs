@@ -51,8 +51,6 @@ namespace up.Pages
 
                 CurrentUser.ActiveConnectionString = tempConnString;
 
-                MessageBox.Show("Подключение к серверу успешно!", "Система");
-
                 // Переходим на окно авторизации
                 MainWindow.mainWindow.frame.Navigate(new Pages.Navigation(CurrentUser.ActiveConnectionString));
             }

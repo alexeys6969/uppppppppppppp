@@ -35,7 +35,7 @@ namespace up.Pages
 
         private void EmployeeClick(object sender, RoutedEventArgs e)
         {
-            MainWindow.mainWindow.frame.Navigate(new Pages.employees(role, currentEmployee));
+            MainWindow.mainWindow.frame.Navigate(new Pages.employees(connection));
         }
 
         private void ProductClick(object sender, RoutedEventArgs e)

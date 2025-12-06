@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using up.Models;
+using up.Pages;
 
 namespace up.Classes
 {
@@ -17,9 +18,9 @@ namespace up.Classes
     {
 
         #region Category
-        public List<Category> GetCategories(string roleConnectionString)
+        public List<Models.Category> GetCategories(string roleConnectionString)
         {
-            List<Category> categories = new List<Category>();
+            List<Models.Category> categories = new List<Models.Category>();
             string connectionString = roleConnectionString;
             string query = "SELECT * FROM category";
 
@@ -31,7 +32,7 @@ namespace up.Classes
                 {
                     while (reader.Read())
                     {
-                        Category category = new Category
+                        Models.Category category = new Models.Category
                         {
                             Id = reader.GetInt32(0),
                             Name = reader.GetString(1),
@@ -44,7 +45,7 @@ namespace up.Classes
             return categories;
         }
 
-        public int AddCategory(Category category, string Connection)
+        public int AddCategory(Models.Category category, string Connection)
         {
             string query = @"
             INSERT INTO category (name_category, description_category) 
@@ -108,94 +109,131 @@ namespace up.Classes
         }
         #endregion
 
-        //public List<Employees> GetEmployees(string roleConnectionString)
-        //{
-        //    List<Employees> employees = new List<Employees>();
-        //    string connectionString = roleConnectionString;
-        //    string query = "SELECT full_name, position FROM employee";
+        #region Employees
 
-        //    using (SqlConnection connection = new SqlConnection(connectionString))
-        //    {
-        //        connection.Open();
-        //        using (SqlCommand command = new SqlCommand(query, connection))
-        //        using (SqlDataReader reader = command.ExecuteReader())
-        //        {
-        //            while (reader.Read())
-        //            {
-        //                Employees em = new Employees
-        //                {
-        //                    full_name = reader.GetString(0),
-        //                    position = reader.GetString(1)
-        //                };
-        //                employees.Add(em);
-        //            }
-        //        }
-        //    }
-        //    return employees;
-        //}
+        public List<Employees> GetEmployees(string roleConnectionString)
+        {
+            List<Employees> employees = new List<Employees>();
+            string connectionString = roleConnectionString;
+            string query;
+            if (!connectionString.Contains("admin"))
+            {
+                query = "SELECT employee_id, full_name as 'ФИО сотрудника', position as 'Должность' FROM employee";
 
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Employees em = new Employees
+                            {
+                                employee_id = reader.GetInt32(0),
+                                full_name = reader.GetString(1),
+                                position = reader.GetString(2),
+                                login = "-",
+                                password = "-"
+                            };
+                            employees.Add(em);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                query = "SELECT employee_id, full_name as 'ФИО сотрудника', position as 'Должность', login_employee as 'Логин', password_hash as 'Пароль'  FROM employee";
 
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Employees em = new Employees
+                            {
+                                employee_id = reader.GetInt32(0),
+                                full_name = reader.GetString(1),
+                                position = reader.GetString(2),
+                                login = reader.GetString(3),
+                                password = reader.GetString(4)
+                            };
+                            employees.Add(em);
+                        }
+                    }
+                }
+            }
+            return employees;
+        }
 
+        public int AddEmployees(Employees employees, string Connection)
+        {
+            string query = @"
+            INSERT INTO employee (full_name, position, login_employee, password_hash) 
+            VALUES (@Name, @Position, @Login, @Password);
+        ";
 
+            using (SqlConnection connection = new SqlConnection(Connection))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Name", employees.full_name);
+                    command.Parameters.AddWithValue("@Position", employees.position);
+                    command.Parameters.AddWithValue("@Login", employees.login);
+                    command.Parameters.AddWithValue("@Password", HashPassword(employees.password));
 
-        //public DataTable ExecuteQuery(string query)
-        //{
-        //    DataTable table = new DataTable();
+                    object result = command.ExecuteScalar();
+                    return Convert.ToInt32(result);
+                }
+            }
+        }
 
-        //    using (SqlConnection connection = new SqlConnection(masterConnection))
-        //    {
-        //        connection.Open();
-        //        using (SqlCommand command = new SqlCommand(query, connection))
-        //        using (SqlDataAdapter adapter = new SqlDataAdapter(command))
-        //        {
-        //            adapter.Fill(table);
-        //        }
-        //    }
+        public bool UpdateEmployee(Employees employees, string userRole)
+        {
+            string connectionString = userRole;
 
-        //    return table;
-        //}
+            string query = @"UPDATE employee SET full_name = @Name, position = @Position, login_employee = @Login, password_hash = @Password WHERE employee_id = @Id";
 
-        //// Метод для проверки, что подключение с правами работает
-        //public bool TestRoleConnection(string connectionString)
-        //{
-        //    try
-        //    {
-        //        using (SqlConnection connection = new SqlConnection(connectionString))
-        //        {
-        //            connection.Open();
-        //            // Простой запрос для проверки
-        //            using (SqlCommand command = new SqlCommand("SELECT 1", connection))
-        //            {
-        //                object result = command.ExecuteScalar();
-        //                return result != null && Convert.ToInt32(result) == 1;
-        //            }
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return false;
-        //    }
-        //}
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", employees.employee_id);
+                    command.Parameters.AddWithValue("@Name", employees.full_name);
+                    command.Parameters.AddWithValue("@Position", employees.position);
+                    command.Parameters.AddWithValue("@Login", employees.login);
+                    command.Parameters.AddWithValue("@Password", HashPassword(employees.password));
 
-        //// Метод для выполнения запроса с правами конкретной роли
-        //public DataTable ExecuteWithRole(string query, string roleConnectionString)
-        //{
-        //    DataTable dataTable = new DataTable();
+                    return command.ExecuteNonQuery() > 0;
+                }
+            }
+        }
 
-        //    using (SqlConnection connection = new SqlConnection(roleConnectionString))
-        //    {
-        //        connection.Open();
-        //        using (SqlCommand command = new SqlCommand(query, connection))
-        //        using (SqlDataAdapter adapter = new SqlDataAdapter(command))
-        //        {
-        //            adapter.Fill(dataTable);
-        //        }
-        //    }
+        // Удаление категории
+        public bool DeleteEmployees(int employeesId, string userRole)
+        {
+            string connectionString = userRole;
 
-        //    return dataTable;
-        //}
+            string query = "DELETE FROM employee WHERE employee_id = @Id";
 
-        // Хеширование пароля
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", employeesId);
+                    return command.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+        #endregion
+
+        
         public string HashPassword(string password)
         {
             using (SHA256 sha256 = SHA256.Create())

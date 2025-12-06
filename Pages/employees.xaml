@@ -15,20 +15,8 @@
         </Grid>
         <Grid>
 
-            <DataGrid x:Name="employeesDataGrid" Margin="20,80,20,52" AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" SelectionMode="Single" GridLinesVisibility="Horizontal" RowBackground="White" AlternatingRowBackground="LightGray">
-                <DataGrid.Columns>
-                    <!-- Столбец для Name -->
-                    <DataGridTextColumn Header="Имя сотрудника" 
-                                Binding="{Binding full_name}" 
-                                Width="1*"/>
-                    <!-- Займет 2 доли от доступного пространства -->
+            <DataGrid x:Name="employeesDataGrid" Margin="20,80,20,52" AutoGenerateColumns="True" CanUserAddRows="True" CanUserDeleteRows="True" SelectionMode="Single" GridLinesVisibility="Horizontal" RowBackground="White" AlternatingRowBackground="LightGray">
 
-                    <!-- Столбец для Description -->
-                    <DataGridTextColumn Header="Должность" 
-                                Binding="{Binding position}" 
-                                Width="1*"/>
-                    <!-- Займет 3 доли от доступного пространства -->
-                </DataGrid.Columns>
             </DataGrid>
             <Button Content="Применить изменения" Click="AcceptChange" Style="{StaticResource RoundedButtonStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20,0,0,10" Height="25" Width="139"/>
         </Grid>

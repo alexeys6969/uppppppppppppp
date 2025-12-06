@@ -24,111 +24,96 @@ namespace up.Pages
     public partial class employees : Page
     {
         private Connection Connection;
-        private string userRole;
+        private string connect;
         private ObservableCollection<Employees> _employees; 
-        Employees employee;
-        public employees(string userPosition, Employees _employees)
+        public employees(string _connection)
         {
             InitializeComponent();
             Connection = new Connection();
-            userRole = userPosition;
+            connect = _connection;
             LoadEmployees();
-            employee = _employees;
         }
         private void LoadEmployees()
         {
-            //try
-            //{
-            //    string roleConnection = Connection.GetConnection(userRole);
-            //    var loadedEmployees = Connection.GetEmployees(roleConnection);
+            try
+            {
+                var loadedEmployees = Connection.GetEmployees(connect);
 
-            //    // Используем ObservableCollection для автоматического обновления UI
-            //    _employees = new ObservableCollection<Employees>(loadedEmployees);
-            //    employeesDataGrid.ItemsSource = _employees;
-            //    MessageBox.Show($"Загружено {_employees.Count} сотрудников",
-            //  "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show($"Ошибка загрузки данных: {ex.Message}",
-            //                  "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            //}
+                _employees = new ObservableCollection<Employees>(loadedEmployees);
+                employeesDataGrid.ItemsSource = _employees;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка загрузки данных: {ex.Message}",
+                              "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Back(object sender, RoutedEventArgs e)
         {
-            //MainWindow.mainWindow.frame.Navigate(new Pages.Navigation(employee));
+            MainWindow.mainWindow.frame.Navigate(new Pages.Navigation(connect));
         }
 
         private void AcceptChange(object sender, RoutedEventArgs e)
         {
-            //try
-            //{
-            //    // Принудительно завершаем редактирование в DataGrid
-            //    employeesDataGrid.CommitEdit();
+            try
+            {
+                employeesDataGrid.CommitEdit();
+                var currentEmployees = _employees.ToList();
+                var originalEmployees = Connection.GetEmployees(connect).ToList();
 
-            //    // Делаем паузу для применения изменений
-            //    Application.Current.Dispatcher.Invoke(() => { }, DispatcherPriority.Background);
+                foreach (var employees in currentEmployees)
+                {
+                    if (employees.employee_id > 0) // Существующая запись
+                    {
+                        var originalEmployee = originalEmployees.FirstOrDefault(c => c.employee_id == employees.employee_id);
+                        if (originalEmployee != null &&
+                            (originalEmployee.full_name != employees.full_name ||
+                             originalEmployee.position != employees.position))
+                        {
+                            bool updated = Connection.UpdateEmployee(employees, connect);
+                            if (!updated)
+                            {
+                                MessageBox.Show($"Не удалось обновить категорию '{employees.full_name}'",
+                                               "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            }
+                        }
+                    }
+                }
 
-            //    // Сохраняем копию текущих данных
-            //    var currentEmployees = _employees.ToList();
-            //    var originalEmployees = Connection.GetEmployees(Connection.GetConnection(userRole)).ToList();
+                foreach (var employees in currentEmployees.Where(c => c.employee_id == 0))
+                {
+                    int newId = Connection.AddEmployees(employees, connect);
+                    if (newId > 0)
+                    {
+                        employees.employee_id = newId;
+                    }
+                }
 
-            //    // 1. ОБНОВЛЕНИЕ существующих категорий
-            //    foreach (var employees in currentEmployees)
-            //    {
-            //        if (employees.employee_id > 0) // Существующая запись
-            //        {
-            //            var originalEmpl = originalEmployees.FirstOrDefault(c => c.employee_id == employees.employee_id);
-            //            if (originalEmpl != null &&
-            //                (originalEmpl.full_name != employees.full_name ||
-            //                 originalEmpl.position != employees.position))
-            //            {
-            //                bool updated = Connection.UpdateCategory(category, userRole);
-            //                if (!updated)
-            //                {
-            //                    MessageBox.Show($"Не удалось обновить категорию '{category.Name}'",
-            //                                   "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-            //                }
-            //            }
-            //        }
-            //    }
+                var employeesToDelete = originalEmployees.Where(oldEmp =>
+                    !currentEmployees.Any(newEmp => newEmp.employee_id == oldEmp.employee_id)).ToList();
 
-            //    // 2. ДОБАВЛЕНИЕ новых категорий
-            //    foreach (var category in currentCategories.Where(c => c.Id == 0))
-            //    {
-            //        int newId = Connection.AddCategory(category, userRole);
-            //        if (newId > 0)
-            //        {
-            //            category.Id = newId;
-            //        }
-            //    }
+                foreach (var emplToDelete in employeesToDelete)
+                {
+                    bool deleted = Connection.DeleteEmployees(emplToDelete.employee_id, connect);
+                    if (!deleted)
+                    {
+                        MessageBox.Show($"Не удалось удалить сотрудника '{emplToDelete.full_name}'",
+                                       "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                }
 
-            //    // 3. УДАЛЕНИЕ категорий
-            //    var categoriesToDelete = originalCategories.Where(oldCat =>
-            //        !currentCategories.Any(newCat => newCat.Id == oldCat.Id)).ToList();
+                MessageBox.Show("Изменения сохранены успешно!",
+                               "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
 
-            //    foreach (var categoryToDelete in categoriesToDelete)
-            //    {
-            //        bool deleted = Connection.DeleteCategory(categoryToDelete.Id, userRole);
-            //        if (!deleted)
-            //        {
-            //            MessageBox.Show($"Не удалось удалить категорию '{categoryToDelete.Name}'",
-            //                           "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-            //        }
-            //    }
-
-            //    MessageBox.Show("Изменения сохранены успешно!",
-            //                   "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-
-            //    // Обновляем данные
-            //    LoadCategories();
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show($"Ошибка сохранения: {ex.Message}\n{ex.StackTrace}",
-            //                   "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            //}
+                LoadEmployees();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка сохранения: {ex.Message}",
+                               "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                LoadEmployees();
+            }
         }
     }
 }
