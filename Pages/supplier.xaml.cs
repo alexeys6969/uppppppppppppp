@@ -60,7 +60,6 @@ namespace up.Pages
             try
             {
                 suppliersDataGrid.CommitEdit();
-                suppliersDataGrid.CommitEdit();
 
                 var currentSuppliers = _supplier.ToList();
                 var originaSuppliers = Connection.GetSupplier(connect).ToList();

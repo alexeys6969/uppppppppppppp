@@ -665,7 +665,7 @@ namespace up.Classes
             return_date = @return_date,
             reason = @reason,
             total_refund = @total_refund
-            WHERE return_id = @return_id;";
+            WHERE return_id = @Id;";
 
             using (SqlConnection connection = new SqlConnection(connectionstring))
             {
@@ -790,6 +790,112 @@ namespace up.Classes
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Id", supplierId);
+                    return command.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Supplier_order
+
+        public List<SupplierOrder> GetOrders(string roleConnectionString)
+        {
+            List<SupplierOrder> orders = new List<SupplierOrder>();
+            string connectionString = roleConnectionString;
+            string query = @"SELECT order_id, supplier.name_supplier, order_date, status_order, total_cost
+        FROM supplier_order
+        INNER JOIN supplier ON supplier_order.supplier_id = supplier.supplier_id";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        SupplierOrder order = new SupplierOrder
+                        {
+                            Id = reader.GetInt32(0),
+                            SupplierName = reader.GetString(1),
+                            OrderDate = reader.GetDateTime(2),
+                            StatusOrder = reader.GetString(3),
+                            TotalCost = reader.GetDecimal(4)
+                        };
+                        orders.Add(order);
+                    }
+                }
+            }
+            return orders;
+        }
+
+        public int AddOrder(SupplierOrder supplier, string Connection)
+        {
+            string query = @"
+            INSERT INTO supplier_order (supplier_id, order_date, status_order, total_cost) values (
+            (SELECT supplier_id FROM supplier WHERE name_supplier = @Name),
+            @Date, 
+            @Status, 
+            @Cost)";
+
+            using (SqlConnection connection = new SqlConnection(Connection))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Name", supplier.SupplierName);
+                    command.Parameters.AddWithValue("@Date", supplier.OrderDate);
+                    command.Parameters.AddWithValue("@Status", supplier.StatusOrder);
+                    command.Parameters.AddWithValue("@Cost", supplier.TotalCost);
+
+                    object result = command.ExecuteScalar();
+                    return Convert.ToInt32(result);
+                }
+            }
+        }
+
+        public bool UpdateOrder(SupplierOrder orders, string userrole)
+        {
+            string connectionstring = userrole;
+
+            string query = @"UPDATE supplier_order 
+            SET 
+            supplier_id = (SELECT supplier_id FROM supplier WHERE name_supplier = @Name),
+            order_date = @Date,
+            status_order = @Status,
+            total_cost = @Cost
+            WHERE order_id = @Id;";
+
+            using (SqlConnection connection = new SqlConnection(connectionstring))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", orders.Id);
+                    command.Parameters.AddWithValue("@Name", orders.SupplierName);
+                    command.Parameters.AddWithValue("@Date", orders.OrderDate);
+                    command.Parameters.AddWithValue("@Status", orders.StatusOrder);
+                    command.Parameters.AddWithValue("@Cost", orders.TotalCost);
+
+                    return command.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+
+        // Удаление категории
+        public bool DeleteOrder(int orderId, string userRole)
+        {
+            string connectionString = userRole;
+
+            string query = "DELETE FROM supplier_order WHERE order_id = @Id";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", orderId);
                     return command.ExecuteNonQuery() > 0;
                 }
             }

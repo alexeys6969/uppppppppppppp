@@ -65,7 +65,7 @@ namespace up.Pages
 
         private void OrderClick(object sender, RoutedEventArgs e)
         {
-
+            MainWindow.mainWindow.frame.Navigate(new Pages.Orders(connection));
         }
     }
 }
