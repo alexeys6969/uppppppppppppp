@@ -54,7 +54,7 @@ namespace up.Pages
 
         private void Back(object sender, RoutedEventArgs e)
         {
-
+            MainWindow.mainWindow.frame.Navigate(new Pages.Navigation(connect));
         }
 
         private void AcceptChange(object sender, RoutedEventArgs e)
@@ -71,8 +71,7 @@ namespace up.Pages
                     {
                         var originReturn = originalReturns.FirstOrDefault(c => c.Id == returns.Id);
                         if (originReturn != null &&
-                            (originReturn.ReturnNumber != returns.ReturnNumber ||
-                             originReturn.Id != returns.Id))
+                            (originReturn.ReturnNumber != returns.ReturnNumber))
                         {
                             bool updated = Connection.UpdateReturn(returns, connect);
                             if (!updated)

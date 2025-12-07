@@ -705,6 +705,98 @@ namespace up.Classes
 
         #endregion
 
+        #region Supplier
+
+        public List<Supplier> GetSupplier(string roleConnectionString)
+        {
+            List<Supplier> suppliers = new List<Supplier>();
+            string connectionString = roleConnectionString;
+            string query = @"SELECT * FROM supplier";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Supplier supplier = new Supplier
+                        {
+                            Id = reader.GetInt32(0),
+                            NameSupplier = reader.GetString(1),
+                            ContactInfo = reader.GetString(2)
+                        };
+                        suppliers.Add(supplier);
+                    }
+                }
+            }
+            return suppliers;
+        }
+
+        public int AddSupplier(Supplier supplier, string Connection)
+        {
+            string query = @"
+            INSERT INTO supplier (name_supplier, contact_info) values (@Name, @Contact)";
+
+            using (SqlConnection connection = new SqlConnection(Connection))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Name", supplier.NameSupplier);
+                    command.Parameters.AddWithValue("@Contact", supplier.ContactInfo);
+ 
+                    object result = command.ExecuteScalar();
+                    return Convert.ToInt32(result);
+                }
+            }
+        }
+
+        public bool UpdateSupplier(Supplier supplier, string userrole)
+        {
+            string connectionstring = userrole;
+
+            string query = @"UPDATE supplier 
+            SET 
+            name_supplier = @Name,
+            contact_info = @Contact
+            where supplier_id = @Id";
+
+            using (SqlConnection connection = new SqlConnection(connectionstring))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", supplier.Id);
+                    command.Parameters.AddWithValue("@Name", supplier.NameSupplier);
+                    command.Parameters.AddWithValue("@Contact", supplier.ContactInfo);
+
+                    return command.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+
+        // Удаление категории
+        public bool DeleteSupplier(int supplierId, string userRole)
+        {
+            string connectionString = userRole;
+
+            string query = "DELETE FROM supplier WHERE supplier_id = @Id";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", supplierId);
+                    return command.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+
+        #endregion
+
         public string HashPassword(string password)
         {
             using (SHA256 sha256 = SHA256.Create())

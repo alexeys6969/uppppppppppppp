@@ -60,7 +60,7 @@ namespace up.Pages
 
         private void SupplierClick(object sender, RoutedEventArgs e)
         {
-
+            MainWindow.mainWindow.frame.Navigate(new Pages.supplier(connection));
         }
 
         private void OrderClick(object sender, RoutedEventArgs e)
