@@ -60,11 +60,6 @@ namespace up.Pages
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-        private void registration(object sender, RoutedEventArgs e)
-        {
-
-        }
     } 
 }
             

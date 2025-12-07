@@ -95,10 +95,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\Registration.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Pages\Reports.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -119,13 +115,10 @@
   <ItemGroup>
     <Compile Include="Models\Product.cs" />
     <Compile Include="Models\Report.cs" />
-    <Compile Include="Models\ReturnItem.cs" />
     <Compile Include="Models\Returns.cs" />
     <Compile Include="Models\Sale.cs" />
-    <Compile Include="Models\SaleItem.cs" />
     <Compile Include="Models\Supplier.cs" />
     <Compile Include="Models\SupplierOrder.cs" />
-    <Compile Include="Models\SupplierOrderItem.cs" />
     <Compile Include="Pages\Authorization.xaml.cs">
       <DependentUpon>Authorization.xaml</DependentUpon>
     </Compile>
@@ -143,9 +136,6 @@
     </Compile>
     <Compile Include="Pages\Products.xaml.cs">
       <DependentUpon>Products.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Registration.xaml.cs">
-      <DependentUpon>Registration.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Reports.xaml.cs">
       <DependentUpon>Reports.xaml</DependentUpon>

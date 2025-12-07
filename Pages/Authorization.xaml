@@ -20,7 +20,6 @@
                 <PasswordBox Style="{StaticResource RoundedPasswordbox}" x:Name="password" FontFamily="Malgun Gothic" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="0,0,0,0" Height="25" Width="601"/>
 
                 <Button Style="{StaticResource RoundedButtonStyle}" Content="Авторизоваться" Click="authorization" HorizontalAlignment="Center" Margin="0,25,0,0" Height="25" Width="424"/>
-                <Button Click="registration" Content="Зарегестрироваться" Foreground="Orange" FontFamily="Malgun Gothic" HorizontalAlignment="Center" Margin="0,50,0,0" Background="Transparent" BorderBrush="Black" VerticalAlignment="Center" />
             </StackPanel>
         </Grid>
     </Grid>
