@@ -16,7 +16,7 @@ namespace up.Classes
 
         public static string BuildConnectionString(string dbUser, string dbPassword)
         {
-            return $@"Server=LAPTOP3019;Database=music_store;User Id={dbUser};Password={dbPassword};TrustServerCertificate=true;";
+            return $@"Server=WINSERV-ISP-23-\WINSERVSQL;Database=music_store;User Id={dbUser};Password={dbPassword};TrustServerCertificate=true;";
         }
 
         public static void Clear()

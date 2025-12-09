@@ -67,5 +67,10 @@ namespace up.Pages
         {
             MainWindow.mainWindow.frame.Navigate(new Pages.Orders(connection));
         }
+
+        private void Exit(object sender, RoutedEventArgs e)
+        {
+            MainWindow.mainWindow.frame.Navigate(new Pages.Authorization());
+        }
     }
 }

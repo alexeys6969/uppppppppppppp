@@ -69,7 +69,7 @@ namespace up.Pages
                         var originalEmployee = originalEmployees.FirstOrDefault(c => c.employee_id == employees.employee_id);
                         if (originalEmployee != null &&
                             (originalEmployee.full_name != employees.full_name ||
-                             originalEmployee.position != employees.position))
+                             originalEmployee.position != employees.position || originalEmployee.login != employees.login || originalEmployee.password != employees.password))
                         {
                             bool updated = Connection.UpdateEmployee(employees, connect);
                             if (!updated)

@@ -22,7 +22,7 @@
                     <Button Content="Поставщики" Click="SupplierClick" x:Name="SupplierBtn" FontSize="20"  Style="{StaticResource RoundedButtonStyle}" Height="50" Margin="30,10,30,0" HorizontalAlignment="Center" Width="672" VerticalAlignment="Top"/>
                     <Button Content="Поставки" Click="OrderClick" x:Name="OrderBtn" FontSize="20"  Style="{StaticResource RoundedButtonStyle}" Height="50" Margin="30,10,30,0" HorizontalAlignment="Center" Width="672" VerticalAlignment="Top"/>
                     <Button Content="Возвраты" Click="ReturnClick" x:Name="ReturnBtn" FontSize="20"  Style="{StaticResource RoundedButtonStyle}" Height="50" Margin="30,10,30,0" HorizontalAlignment="Center" Width="672" VerticalAlignment="Top"/>
-
+                    <Button Content="Выйти из системы" Click="Exit" Background="White" Foreground="Black" FontSize="20"  Style="{StaticResource RoundedButtonStyle}" Height="50" Margin="30,10,30,0" HorizontalAlignment="Center" Width="672" VerticalAlignment="Top"/>
                 </StackPanel>
             </ScrollViewer>
         </Grid>

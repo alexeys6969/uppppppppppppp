@@ -116,9 +116,8 @@ namespace up.Classes
             List<Employees> employees = new List<Employees>();
             string connectionString = roleConnectionString;
             string query;
-            if (!connectionString.Contains("admin"))
-            {
-                query = "SELECT employee_id, full_name as 'ФИО сотрудника', position as 'Должность' FROM employee";
+
+                query = "SELECT * FROM employee";
 
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
@@ -127,6 +126,8 @@ namespace up.Classes
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
+                        {
+                        if (!roleConnectionString.Contains("admin"))
                         {
                             Employees em = new Employees
                             {
@@ -137,21 +138,7 @@ namespace up.Classes
                                 password = "-"
                             };
                             employees.Add(em);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                query = "SELECT employee_id, full_name as 'ФИО сотрудника', position as 'Должность', login_employee as 'Логин', password_hash as 'Пароль'  FROM employee";
-
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
+                        } else
                         {
                             Employees em = new Employees
                             {
@@ -163,11 +150,14 @@ namespace up.Classes
                             };
                             employees.Add(em);
                         }
+
+                        }
                     }
                 }
-            }
             return employees;
         }
+            
+        
 
         public int AddEmployees(Employees employees, string Connection)
         {
@@ -175,21 +165,29 @@ namespace up.Classes
             INSERT INTO employee (full_name, position, login_employee, password_hash) 
             VALUES (@Name, @Position, @Login, @Password);
         ";
-
-            using (SqlConnection connection = new SqlConnection(Connection))
+            try
             {
-                connection.Open();
-                using (SqlCommand command = new SqlCommand(query, connection))
+                using (SqlConnection connection = new SqlConnection(Connection))
                 {
-                    command.Parameters.AddWithValue("@Name", employees.full_name);
-                    command.Parameters.AddWithValue("@Position", employees.position);
-                    command.Parameters.AddWithValue("@Login", employees.login);
-                    command.Parameters.AddWithValue("@Password", HashPassword(employees.password));
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Name", employees.full_name);
+                        command.Parameters.AddWithValue("@Position", employees.position);
+                        command.Parameters.AddWithValue("@Login", employees.login);
+                        command.Parameters.AddWithValue("@Password", HashPassword(employees.password));
 
-                    object result = command.ExecuteScalar();
-                    return Convert.ToInt32(result);
+                        object result = command.ExecuteScalar();
+                        return Convert.ToInt32(result);
+                    }
                 }
+
+            } catch(SqlException ex)
+            {
+                MessageBox.Show(ex.Message.ToString() + "Провертье валидность данных!");
+                return -1;
             }
+
         }
 
         public bool UpdateEmployee(Employees employees, string userRole)
