@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -71,7 +72,7 @@ namespace up.Pages
                         var originalOrder = originOrders.FirstOrDefault(c => c.Id == orders.Id);
                         if (originalOrder != null &&
                             (originalOrder.SupplierName != orders.SupplierName ||
-                    originalOrder.OrderDate != orders.OrderDate || originalOrder.StatusOrder != orders.StatusOrder))
+                    originalOrder.OrderDate != orders.OrderDate || originalOrder.StatusOrder != orders.StatusOrder || originalOrder.TotalCost != orders.TotalCost))
                         {
                             bool updated = Connection.UpdateOrder(orders, connect);
                             if (!updated)
@@ -110,7 +111,7 @@ namespace up.Pages
 
                 LoadOrders();
             }
-            catch (Exception ex)
+            catch (SqlException ex)
             {
                 MessageBox.Show($"Ошибка сохранения: {ex.Message}",
                                "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);

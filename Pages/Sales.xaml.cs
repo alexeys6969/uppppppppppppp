@@ -72,7 +72,11 @@ namespace up.Pages
                         var originalSale = originalSales.FirstOrDefault(c => c.Id == sales.Id);
                         if (originalSale != null &&
                             (originalSale.SaleNumber != sales.SaleNumber ||
-                             originalSale.Id != sales.Id))
+                             originalSale.SaleDate != sales.SaleDate ||
+                             originalSale.TotalAmount != sales.TotalAmount ||
+                             originalSale.PaymentStatus != sales.PaymentStatus ||
+                             originalSale.PaymentMethod != sales.PaymentMethod ||
+                             originalSale.EmployeeName != sales.EmployeeName))
                         {
                             bool updated = Connection.UpdateSale(sales, connect);
                             if (!updated)

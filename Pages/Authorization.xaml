@@ -12,14 +12,14 @@
             <Label Foreground="White" Content="Авторизация" Margin="0,10,0,10" FontFamily="Malgun Gothic" FontSize="30" VerticalAlignment="Top" HorizontalAlignment="Center"/>
         </Grid>
         <Grid Margin="0,70,0,0">
-            <StackPanel HorizontalAlignment="Center">
-                <Label Content="Логин" FontFamily="Malgun Gothic" FontSize="18" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,10,0,0" Height="35" Width="60"/>
-                <TextBox Style="{StaticResource RoundedTextbox}" x:Name="login" FontFamily="Malgun Gothic" FontSize="18" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="0,0,0,0" Height="25" Width="602"/>
+            <StackPanel Margin="25,0,25,0">
+                <Label Content="Логин" FontFamily="Malgun Gothic" FontSize="18" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,10,0,0" Height="35" />
+                <TextBox Style="{StaticResource RoundedTextbox}" x:Name="login" FontFamily="Malgun Gothic" FontSize="18" VerticalContentAlignment="Center" Margin="0,0,0,0" Height="25"/>
 
-                <Label Content="Пароль" FontFamily="Malgun Gothic" FontSize="18" HorizontalAlignment="Left" Margin="0,20,0,0" Height="35" Width="75"/>
-                <PasswordBox Style="{StaticResource RoundedPasswordbox}" x:Name="password" FontFamily="Malgun Gothic" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="0,0,0,0" Height="25" Width="601"/>
+                <Label Content="Пароль" FontFamily="Malgun Gothic" FontSize="18" HorizontalAlignment="Left" Margin="0,20,0,0" Height="35"/>
+                <PasswordBox Style="{StaticResource RoundedPasswordbox}" x:Name="password" FontFamily="Malgun Gothic" VerticalContentAlignment="Center" Margin="0,0,0,0" Height="25"/>
 
-                <Button Style="{StaticResource RoundedButtonStyle}" Content="Авторизоваться" Click="authorization" HorizontalAlignment="Center" Margin="0,25,0,0" Height="25" Width="424"/>
+                <Button IsDefault="True" Style="{StaticResource RoundedButtonStyle}" Content="Авторизоваться" Click="authorization" HorizontalAlignment="Center" Margin="0,25,0,0" Height="25" Width="424"/>
             </StackPanel>
         </Grid>
     </Grid>

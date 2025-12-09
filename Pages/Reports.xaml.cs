@@ -70,7 +70,10 @@ namespace up.Pages
                         var originalReport = originalReports.FirstOrDefault(c => c.Id == reports.Id);
                         if (originalReport != null &&
                             (originalReport.ReportType != reports.ReportType ||
-                             originalReport.PeriodEnd != reports.PeriodEnd))
+                            originalReport.PeriodStart != reports.PeriodStart ||
+                             originalReport.PeriodEnd != reports.PeriodEnd ||
+                             originalReport.CreatedAt != reports.CreatedAt ||
+                             originalReport.NameEmployee != reports.NameEmployee))
                         {
                             bool updated = Connection.UpdateReport(reports, connect);
                             if (!updated)

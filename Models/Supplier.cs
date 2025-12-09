@@ -11,5 +11,5 @@ namespace up.Models
         public int Id { get; set; }
         public string NameSupplier { get; set; }
         public string ContactInfo { get; set; }
-    }
+    } 
 }

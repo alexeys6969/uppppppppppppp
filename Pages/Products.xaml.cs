@@ -65,7 +65,12 @@ namespace up.Pages
                         var originalProduct = originalProducts.FirstOrDefault(c => c.Id == products.Id);
                         if (originalProduct != null &&
                             (originalProduct.NameProduct != products.NameProduct ||
-                             originalProduct.Article != products.Article))
+                             originalProduct.Article != products.Article ||
+                             originalProduct.Brand != products.Brand ||
+                             originalProduct.Model != products.Model ||
+                             originalProduct.Price != products.Price ||
+                             originalProduct.QuantityStock != products.QuantityStock ||
+                             originalProduct.CategoryName != products.CategoryName))
                         {
                             bool updated = Connection.UpdateProduct(products, connect);
                             if (!updated)

@@ -71,7 +71,12 @@ namespace up.Pages
                     {
                         var originReturn = originalReturns.FirstOrDefault(c => c.Id == returns.Id);
                         if (originReturn != null &&
-                            (originReturn.ReturnNumber != returns.ReturnNumber))
+                            (originReturn.ReturnNumber != returns.ReturnNumber ||
+                            originReturn.SaleNumber != returns.SaleNumber ||
+                            originReturn.EmployeeName != returns.EmployeeName ||
+                            originReturn.ReturnDate != returns.ReturnDate ||
+                            originReturn.Reason != returns.Reason ||
+                            originReturn.TotalRefund != returns.TotalRefund))
                         {
                             bool updated = Connection.UpdateReturn(returns, connect);
                             if (!updated)
