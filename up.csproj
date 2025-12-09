@@ -117,8 +117,10 @@
     <Compile Include="Models\Report.cs" />
     <Compile Include="Models\Returns.cs" />
     <Compile Include="Models\Sale.cs" />
+    <Compile Include="Models\SaleItem.cs" />
     <Compile Include="Models\Supplier.cs" />
     <Compile Include="Models\SupplierOrder.cs" />
+    <Compile Include="Models\SupplierOrderItem.cs" />
     <Compile Include="Pages\Authorization.xaml.cs">
       <DependentUpon>Authorization.xaml</DependentUpon>
     </Compile>

@@ -48,11 +48,9 @@ namespace up.Pages
                 {
                     conn.Open();
                 }
-
                 CurrentUser.ActiveConnectionString = tempConnString;
-
-                // Переходим на окно авторизации
                 MainWindow.mainWindow.frame.Navigate(new Pages.Navigation(CurrentUser.ActiveConnectionString));
+
             }
             catch (Exception ex)
             {
