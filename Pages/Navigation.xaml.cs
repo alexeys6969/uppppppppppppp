@@ -43,16 +43,6 @@ namespace up.Pages
             MainWindow.mainWindow.frame.Navigate(new Pages.Products(connection));
         }
 
-        private void ReportClick(object sender, RoutedEventArgs e)
-        {
-            MainWindow.mainWindow.frame.Navigate(new Pages.Reports(connection));
-        }
-
-        private void ReturnClick(object sender, RoutedEventArgs e)
-        {
-            MainWindow.mainWindow.frame.Navigate(new Pages.Return(connection));
-        }
-
         private void SaleClick(object sender, RoutedEventArgs e)
         {
             MainWindow.mainWindow.frame.Navigate(new Pages.Sales(connection));
@@ -71,6 +61,16 @@ namespace up.Pages
         private void Exit(object sender, RoutedEventArgs e)
         {
             MainWindow.mainWindow.frame.Navigate(new Pages.Authorization());
+        }
+
+        private void CheckClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void OrderItemClick(object sender, RoutedEventArgs e)
+        {
+            MainWindow.mainWindow.frame.Navigate(new Pages.OrderItem(connection));
         }
     }
 }

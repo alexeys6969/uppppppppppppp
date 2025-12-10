@@ -355,15 +355,15 @@ namespace up.Classes
         }
         #endregion
 
-        #region Report
+        #region SupplierOrder
 
-        public List<Report> GetReport(string roleConnectionString)
+        public List<SupplierOrderItem> GetOrder(string roleConnectionString)
         {
-            List<Report> products = new List<Report>();
+            List<SupplierOrderItem> orderitems = new List<SupplierOrderItem>();
             string connectionString = roleConnectionString;
-            string query = @"SELECT report_id, report_type, period_start, period_end, created_at, full_name 
-        FROM report
-        INNER JOIN employee ON report.created_by = employee.employee_id";
+            string query = @"SELECT order_item_id, order_id, name_product, quantity, purchase_price
+FROM supplier_order_item
+INNER JOIN product ON supplier_order_item.product_id = product.product_id";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -373,43 +373,42 @@ namespace up.Classes
                 {
                     while (reader.Read())
                     {
-                        Report report = new Report
+                        SupplierOrderItem OrderItems = new SupplierOrderItem
                         {
                             Id = reader.GetInt32(0),
-                            ReportType = reader.GetString(1),
-                            PeriodStart = reader.GetDateTime(2),
-                            PeriodEnd = reader.GetDateTime(3),
-                            CreatedAt = reader.GetDateTime(4),
-                            NameEmployee = reader.GetString(5)
+                            order_id = reader.GetInt32(1),
+                            product_name = reader.GetString(2),
+                            quantity = reader.GetInt32(3),
+                            price = reader.GetDecimal(4)
                         };
-                        products.Add(report);
+                        orderitems.Add(OrderItems);
                     }
                 }
             }
-            return products;
+            return orderitems;
         }
 
-        public int AddReport(Report report, string Connection)
+        public int GetOrder(SupplierOrderItem orderItem, string Connection)
         {
             string query = @"
-            INSERT INTO report (report_type, period_start, period_end, created_at, created_by)
-            VALUES (
-            @Type, 
-            @Start, 
-            @End, 
-            @At,
-            (SELECT employee_id FROM employee WHERE full_name = @Name))";
+            INSERT INTO supplier_order_item (order_id, product_id, quantity, purchase_price)
+            SELECT 
+            @OrderId,
+            p.product_id,
+            @Quantity,
+            @PurchasePrice
+            FROM product p
+            WHERE p.name_product = @ProductName";
 
             using (SqlConnection connection = new SqlConnection(Connection))
             {
                 connection.Open();
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Type", report.ReportType);
-                    command.Parameters.AddWithValue("@Start", report.PeriodStart);
-                    command.Parameters.AddWithValue("@End", report.PeriodEnd);
-                    command.Parameters.AddWithValue("@At", report.CreatedAt);
-                    command.Parameters.AddWithValue("@Name", report.NameEmployee);
+                    command.Parameters.AddWithValue("@OrderId", orderItem.order_id);
+                    command.Parameters.AddWithValue("@ProductName", orderItem.product_name);
+                    command.Parameters.AddWithValue("@Quantity", orderItem.quantity);
+                    command.Parameters.AddWithValue("@PurchasePrice", orderItem.price);
 
                     object result = command.ExecuteScalar();
                     return Convert.ToInt32(result);
@@ -417,30 +416,28 @@ namespace up.Classes
             }
         }
 
-        public bool UpdateReport(Report report, string userrole)
+        public bool UpdateOrder(SupplierOrderItem orderItem, string userrole)
         {
             string connectionstring = userrole;
 
-            string query = @"UPDATE report 
-                 SET 
-                    report_type = @Type,
-                    period_start = @Start,
-                    period_end = @End,
-                    created_at = @At,
-                    created_by = (SELECT employee_id FROM employee WHERE full_name = @Name)
-                 WHERE report_id = @Id;";
+            string query = @"UPDATE soi
+        SET 
+        soi.quantity = @NewQuantity,
+        soi.purchase_price = @NewPrice
+        FROM supplier_order_item soi
+        INNER JOIN product p ON soi.product_id = p.product_id
+        WHERE soi.order_id = @OrderId 
+    AND p.name_product = @ProductName";
 
             using (SqlConnection connection = new SqlConnection(connectionstring))
             {
                 connection.Open();
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Id", report.Id);
-                    command.Parameters.AddWithValue("@Type", report.ReportType);
-                    command.Parameters.AddWithValue("@Start", report.PeriodStart);
-                    command.Parameters.AddWithValue("@End", report.PeriodEnd);
-                    command.Parameters.AddWithValue("@At", report.CreatedAt);
-                    command.Parameters.AddWithValue("@Name", report.NameEmployee);
+                    command.Parameters.AddWithValue("@Id", orderItem.Id);
+                    command.Parameters.AddWithValue("@OrderId", orderItem.order_id);
+                    command.Parameters.AddWithValue("@NewPrice", orderItem.price);
+                    command.Parameters.AddWithValue("@ProductName", orderItem.product_name);
 
                     return command.ExecuteNonQuery() > 0;
                 }
@@ -448,18 +445,18 @@ namespace up.Classes
         }
 
         // Удаление категории
-        public bool DeleteReport(int reportId, string userRole)
+        public bool DeleteOrderItem(int itemId, string userRole)
         {
             string connectionString = userRole;
 
-            string query = "DELETE FROM report WHERE report_id = @Id";
+            string query = "DELETE FROM supplier_order_item WHERE order_item_id = @Id";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Id", reportId);
+                    command.Parameters.AddWithValue("@Id", itemId);
                     return command.ExecuteNonQuery() > 0;
                 }
             }

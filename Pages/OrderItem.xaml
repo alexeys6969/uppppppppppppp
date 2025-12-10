@@ -1,4 +1,4 @@
-﻿<Page x:Class="up.Pages.Reports"
+﻿<Page x:Class="up.Pages.OrderItem"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,22 +6,21 @@
       xmlns:local="clr-namespace:up.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="Reports" Background="White">
+      Title="OrderItem">
 
     <Grid>
         <Grid Background="DarkOrange" VerticalAlignment="Top">
             <Button Content="Вернуться" Click="Back" Style="{StaticResource RoundedButtonStyle}"  Background="White" Foreground="Black" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Height="25" Width="100"/>
-            <Label Foreground="White" x:Name="navName" Content="Отчеты" Margin="0,10,0,10" FontFamily="Malgun Gothic" FontSize="30" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+            <Label Foreground="White" x:Name="navName" Content="Элементы поставок" Margin="0,10,0,10" FontFamily="Malgun Gothic" FontSize="30" VerticalAlignment="Top" HorizontalAlignment="Center"/>
         </Grid>
         <Grid>
 
-            <DataGrid AlternationCount="1" x:Name="reportsDataGrid" Margin="20,80,20,52" AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" SelectionMode="Single" GridLinesVisibility="Horizontal" RowBackground="White" AlternatingRowBackground="LightGray">
+            <DataGrid AlternationCount="1" x:Name="ordersDataGrid" Margin="20,80,20,52" AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" SelectionMode="Single" GridLinesVisibility="Horizontal" RowBackground="White" AlternatingRowBackground="LightGray">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Тип" Binding="{Binding ReportType}" Width="1*"/>
-                    <DataGridTextColumn Header="С" Binding="{Binding PeriodStart}" Width="1*"/>
-                    <DataGridTextColumn Header="По" Binding="{Binding PeriodEnd}" Width="1*"/>
-                    <DataGridTextColumn Header="Создан" Binding="{Binding CreatedAt}" Width="1*"/>
-                    <DataGridTextColumn Header="Автор" Binding="{Binding NameEmployee}" Width="1*"/>
+                    <DataGridTextColumn Header="Заказ" Binding="{Binding order_id}" Width="1*"/>
+                    <DataGridTextColumn Header="Товар" Binding="{Binding product_name}" Width="1*"/>
+                    <DataGridTextColumn Header="Количество" Binding="{Binding quantity}" Width="1*"/>
+                    <DataGridTextColumn Header="Закупочная стоимость" Binding="{Binding price}" Width="1*"/>
                 </DataGrid.Columns>
             </DataGrid>
             <Button Content="Применить изменения" Click="AcceptChange" Style="{StaticResource RoundedButtonStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20,0,0,10" Height="25" Width="139"/>
