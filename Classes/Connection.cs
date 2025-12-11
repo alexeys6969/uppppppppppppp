@@ -355,7 +355,7 @@ namespace up.Classes
         }
         #endregion
 
-        #region SupplierOrder
+        #region Supplier_Order_Item
 
         public List<SupplierOrderItem> GetOrder(string roleConnectionString)
         {
@@ -388,7 +388,7 @@ INNER JOIN product ON supplier_order_item.product_id = product.product_id";
             return orderitems;
         }
 
-        public int GetOrder(SupplierOrderItem orderItem, string Connection)
+        public int AddOrderItem(SupplierOrderItem orderItem, string Connection)
         {
             string query = @"
             INSERT INTO supplier_order_item (order_id, product_id, quantity, purchase_price)
