@@ -582,16 +582,16 @@ INNER JOIN product ON supplier_order_item.product_id = product.product_id";
 
         #endregion
 
-        #region Return
+        #region SaleItem
 
-        public List<Returns> GetReturn(string roleConnectionString)
+        public List<Models.SaleItem> GetSaleItm(string roleConnectionString)
         {
-            List<Returns> returns = new List<Returns>();
+            List<Models.SaleItem> sitems = new List<Models.SaleItem>();
             string connectionString = roleConnectionString;
-            string query = @"SELECT return_id, sale.sale_number, employee.full_name, return_number, return_date, reason, total_refund
-        FROM returns
-        INNER JOIN sale ON returns.sale_id = sale.sale_id
-		INNER JOIN employee ON returns.employee_id = employee.employee_id";
+            string query = @"SELECT sale_item_id, sale.sale_number, product.name_product, quantity, price_at_sale
+        FROM sale_item
+        INNER JOIN sale ON sale_item.sale_id = sale.sale_id
+		INNER JOIN product ON sale_item.product_id = product.product_id";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -601,46 +601,40 @@ INNER JOIN product ON supplier_order_item.product_id = product.product_id";
                 {
                     while (reader.Read())
                     {
-                        Returns _return = new Returns
+                        Models.SaleItem _sitems = new Models.SaleItem
                         {
                             Id = reader.GetInt32(0),
-                            SaleNumber = reader.GetString(1),
-                            EmployeeName = reader.GetString(2),
-                            ReturnNumber = reader.GetString(3),
-                            ReturnDate = reader.GetDateTime(4),
-                            Reason = reader.GetString(5),
-                            TotalRefund = reader.GetDecimal(6)
+                            sale_number = reader.GetString(1),
+                            product_name = reader.GetString(2),
+                            quantity = reader.GetInt32(3),
+                            price = reader.GetDecimal(4)
                         };
-                        returns.Add(_return);
+                        sitems.Add(_sitems);
                     }
                 }
             }
-            return returns;
+            return sitems;
         }
 
-        public int AddReturn(Returns returns, string Connection)
+        public int AddSaleItm(Models.SaleItem sitems, string Connection)
         {
             string query = @"
-            INSERT INTO returns (sale_id, employee_id, return_number, return_date, reason, total_refund)
+            INSERT INTO sale_item (sale_id, product_id, quantity, price_at_sale)
             SELECT 
             (SELECT sale_id FROM sale WHERE sale_number = @sale_number),
-            (SELECT employee_id FROM employee WHERE full_name = @employee_name),
-            @return_number,
-            @return_date,
-            @reason,
-            @total_refund;";
+            (SELECT name_product FROM product WHERE name_product = @name_product),
+            @quantity,
+            @price;";
 
             using (SqlConnection connection = new SqlConnection(Connection))
             {
                 connection.Open();
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@sale_number", returns.SaleNumber);
-                    command.Parameters.AddWithValue("@employee_name", returns.EmployeeName);
-                    command.Parameters.AddWithValue("@return_number", returns.ReturnNumber);
-                    command.Parameters.AddWithValue("@return_date", returns.ReturnDate);
-                    command.Parameters.AddWithValue("@reason", returns.Reason);
-                    command.Parameters.AddWithValue("@total_refund", returns.TotalRefund);
+                    command.Parameters.AddWithValue("@sale_number", sitems.sale_number);
+                    command.Parameters.AddWithValue("@name_product", sitems.product_name);
+                    command.Parameters.AddWithValue("@quantity", sitems.quantity);
+                    command.Parameters.AddWithValue("@price", sitems.price);
 
                     object result = command.ExecuteScalar();
                     return Convert.ToInt32(result);
@@ -648,32 +642,28 @@ INNER JOIN product ON supplier_order_item.product_id = product.product_id";
             }
         }
 
-        public bool UpdateReturn(Returns returns, string userrole)
+        public bool UpdateSaleItm(Models.SaleItem sitems, string userrole)
         {
             string connectionstring = userrole;
-
-            string query = @"UPDATE returns 
-            SET 
+            string query = @"
+            UPDATE sale_item (sale_id, product_id, quantity, price_at_sale)
+            SET
             sale_id = (SELECT sale_id FROM sale WHERE sale_number = @sale_number),
-            employee_id = (SELECT employee_id FROM employee WHERE full_name = @employee_name),
-            return_number = @return_number,
-            return_date = @return_date,
-            reason = @reason,
-            total_refund = @total_refund
-            WHERE return_id = @Id;";
+            name_product = (SELECT name_product FROM product WHERE name_product = @name_product),
+            quantity = @quantity,
+            price_at_sale = @price
+            WHERE sale_item_id = @Id;";
 
             using (SqlConnection connection = new SqlConnection(connectionstring))
             {
                 connection.Open();
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Id", returns.Id);
-                    command.Parameters.AddWithValue("@sale_number", returns.SaleNumber);
-                    command.Parameters.AddWithValue("@employee_name", returns.EmployeeName);
-                    command.Parameters.AddWithValue("@return_number", returns.ReturnNumber);
-                    command.Parameters.AddWithValue("@return_date", returns.ReturnDate);
-                    command.Parameters.AddWithValue("@reason",  returns.Reason);
-                    command.Parameters.AddWithValue("@total_refund", returns.TotalRefund);
+                    command.Parameters.AddWithValue("@Id", sitems.Id);
+                    command.Parameters.AddWithValue("@sale_number", sitems.sale_number);
+                    command.Parameters.AddWithValue("@name_product", sitems.product_name);
+                    command.Parameters.AddWithValue("@quantity", sitems.quantity);
+                    command.Parameters.AddWithValue("@price", sitems.price);
 
                     return command.ExecuteNonQuery() > 0;
                 }
@@ -681,18 +671,18 @@ INNER JOIN product ON supplier_order_item.product_id = product.product_id";
         }
 
         // Удаление категории
-        public bool DeleteReturn(int returnId, string userRole)
+        public bool DeleteSaleItm(int itmId, string userRole)
         {
             string connectionString = userRole;
 
-            string query = "DELETE FROM returns WHERE return_id = @Id";
+            string query = "DELETE FROM sale_item WHERE sale_item_id = @Id";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Id", returnId);
+                    command.Parameters.AddWithValue("@Id", itmId);
                     return command.ExecuteNonQuery() > 0;
                 }
             }

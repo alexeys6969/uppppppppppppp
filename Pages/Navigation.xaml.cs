@@ -65,7 +65,7 @@ namespace up.Pages
 
         private void CheckClick(object sender, RoutedEventArgs e)
         {
-
+            MainWindow.mainWindow.frame.Navigate(new Pages.SaleItem(connection));
         }
 
         private void OrderItemClick(object sender, RoutedEventArgs e)

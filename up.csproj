@@ -115,7 +115,6 @@
   <ItemGroup>
     <Compile Include="Models\Product.cs" />
     <Compile Include="Models\Report.cs" />
-    <Compile Include="Models\Returns.cs" />
     <Compile Include="Models\Sale.cs" />
     <Compile Include="Models\SaleItem.cs" />
     <Compile Include="Models\Supplier.cs" />
