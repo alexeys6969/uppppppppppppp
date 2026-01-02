@@ -56,6 +56,8 @@ namespace up.Pages
             {
                 MessageBox.Show($"Ошибка подключения к SQL Server:\n{ex.Message}", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Error);
+                login.Text = "";
+                password.Password = "";
             }
         }
     } 

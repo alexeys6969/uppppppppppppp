@@ -58,7 +58,66 @@ namespace up.Pages
 
         private void AcceptChange(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                salesItemsDataGrid.CommitEdit();
+                var currentSItems = _sitems.ToList();
+                var originalSItems = Connection.GetSaleItm(connect).ToList();
 
+                foreach (var SItems in currentSItems)
+                {
+                    if (SItems.Id > 0) // Существующая запись
+                    {
+                        var originalSItem = originalSItems.FirstOrDefault(c => c.Id == SItems.Id);
+                        if (originalSItem != null &&
+                            (originalSItem.product_name != SItems.product_name ||
+                             originalSItem.sale_number != SItems.sale_number ||
+                             originalSItem.quantity != SItems.quantity ||
+                             originalSItem.price != SItems.price))
+                        {
+                            bool updated = Connection.UpdateSaleItm(SItems, connect);
+                            if (!updated)
+                            {
+                                MessageBox.Show($"Не удалось обновить позицию продажи '{SItems.sale_number}'",
+                                               "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            }
+                        }
+                    }
+                }
+
+                foreach (var sitems in currentSItems.Where(c => c.Id == 0))
+                {
+                    int newId = Connection.AddSaleItm(sitems, connect);
+                    if (newId > 0)
+                    {
+                        sitems.Id = newId;
+                    }
+                }
+
+                var sitemsToDelete = originalSItems.Where(oldSIT =>
+                    !currentSItems.Any(newSIT => newSIT.Id == oldSIT.Id)).ToList();
+
+                foreach (var siteToDelete in sitemsToDelete)
+                {
+                    bool deleted = Connection.DeleteSaleItm(siteToDelete.Id, connect);
+                    if (!deleted)
+                    {
+                        MessageBox.Show($"Не удалось удалить позицию продажи '{siteToDelete.sale_number}'",
+                                       "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                }
+
+                MessageBox.Show("Изменения сохранены успешно!",
+                               "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                LoadItms();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка сохранения: {ex.Message}",
+                               "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                LoadItms();
+            }
         }
     }
 }
